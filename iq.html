@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ MIND - GK Quiz</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #001f3f; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { background-color: #00a8ff; width: 360px; border-radius: 25px; padding: 25px; text-align: center; color: white; position: relative; }
+        .header { display: flex; align-items: center; justify-content: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .logo-small { width: 50px; height: 50px; border-radius: 50%; background: white; margin-right: 15px; }
+        .q-count { font-size: 18px; color: #eee; margin-bottom: 15px; }
+        .question { font-size: 20px; font-weight: bold; margin-bottom: 25px; min-height: 50px; line-height: 1.4; }
+        .option { background: white; color: #333; padding: 14px; margin: 10px 0; border-radius: 12px; cursor: pointer; font-weight: 500; transition: 0.2s; border: none; width: 100%; font-size: 16px; }
+        .correct { background-color: #2ecc71 !important; color: white; }
+        .wrong { background-color: #e74c3c !important; color: white; }
+        .next-btn { background: #1877F2; color: white; padding: 15px; width: 100%; border: none; border-radius: 12px; margin-top: 20px; cursor: pointer; font-weight: bold; font-size: 16px; display: none; }
+        .result-box { text-align: left; background: white; color: #333; padding: 20px; border-radius: 15px; margin-top: 15px; }
+        .summary-item { margin-bottom: 10px; border-bottom: 1px solid #eee; padding-bottom: 5px; font-size: 14px; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="logo.png" class="logo-small">
+        <div style="text-align: left;"><strong>IQ MIND</strong><br><small>General Knowledge Quiz</small></div>
+    </div>
+
+    <div id="quiz-area">
+        <div class="q-count">Question <span id="current-q-num">1</span> of 5</div>
+        <div class="question" id="question-text">ප්‍රශ්නය පූරණය වෙමින් පවතී...</div>
+        <div id="options-list"></div>
+        <button id="next-btn" class="next-btn" onclick="handleNext()">NEXT</button>
+    </div>
+
+    <div id="result-area" class="hidden">
+        <h2 style="margin-top:0;">Quiz Finished!</h2>
+        <h3 id="final-score">Score: 0%</h3>
+        <div class="result-box" id="summary-content"></div>
+        <button class="next-btn" style="display:block;" onclick="window.location.href='index.html'">GO HOME</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "ශ්‍රී ලංකාවේ අගනුවර කුමක්ද?", options: ["කොළඹ", "ශ්‍රී ජයවර්ධනපුර කෝට්ටේ", "මහනුවර", "ගාල්ල"], correct: 1 },
+        { q: "ලෝකයේ විශාලතම සාගරය කුමක්ද?", options: ["ඉන්දියන් සාගරය", "පැසිෆික් සාගරය", "අත්ලාන්තික් සාගරය", "ආක්ටික් සාගරය"], correct: 1 },
+        { q: "ශ්‍රී ලංකාව නිදහස ලැබූ වර්ෂය කුමක්ද?", options: ["1947", "1950", "1948", "1956"], correct: 2 },
+        { q: "සූර්යයාට සමීපතම ග්‍රහලෝකය කුමක්ද?", options: ["සිකුරු", "අඟහරු", "බුධ", "පෘථිවිය"], correct: 2 },
+        { q: "ලොව උසම කන්ද කුමක්ද?", options: ["එවරස්ට්", "කේ 2", "පිදුරුතලාගල", "කිලිමන්ජාරෝ"], correct: 0 }
+    ];
+
+    let currentIdx = 0;
+    let score = 0;
+    let answersLog = [];
+
+    function loadQuestion() {
+        const q = questions[currentIdx];
+        document.getElementById("current-q-num").innerText = currentIdx + 1;
+        document.getElementById("question-text").innerText = q.q;
+        const list = document.getElementById("options-list");
+        list.innerHTML = "";
+        document.getElementById("next-btn").style.display = "none";
+
+        q.options.forEach((opt, i) => {
+            const btn = document.createElement("button");
+            btn.className = "option";
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(i, btn);
+            list.appendChild(btn);
+        });
+    }
+
+    function selectOption(index, element) {
+        const correct = questions[currentIdx].correct;
+        const options = document.querySelectorAll(".option");
+        
+        options.forEach(btn => btn.style.pointerEvents = "none");
+
+        if(index === correct) {
+            element.classList.add("correct");
+            score++;
+        } else {
+            element.classList.add("wrong");
+            options[correct].classList.add("correct");
+        }
+
+        answersLog.push({ q: questions[currentIdx].q, ans: questions[currentIdx].options[correct] });
+        document.getElementById("next-btn").style.display = "block";
+        if(currentIdx === questions.length - 1) document.getElementById("next-btn").innerText = "FINISH";
+    }
+
+    function handleNext() {
+        currentIdx++;
+        if(currentIdx < questions.length) {
+            loadQuestion();
+        } else {
+            showResults();
+        }
+    }
+
+    function showResults() {
+        document.getElementById("quiz-area").classList.add("hidden");
+        document.getElementById("result-area").classList.remove("hidden");
+        const percent = (score / questions.length) * 100;
+        document.getElementById("final-score").innerText = `ලකුණු ප්‍රමාණය: ${percent}% (${score}/${questions.length})`;
+        
+        let summary = "<strong>නිවැරදි පිළිතුරු:</strong><br><br>";
+        answersLog.forEach((item, i) => {
+            summary += `<div class='summary-item'>${i+1}. ${item.q}<br><span style='color:#2ecc71'>Ans: ${item.ans}</span></div>`;
+        });
+        document.getElementById("summary-content").innerHTML = summary;
+    }
+
+    loadQuestion();
+</script>
+</body>
+</html>
