@@ -6,37 +6,32 @@
     <title>IQ MIND - GK Quiz</title>
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #001f3f; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
-        .container { background-color: #00a8ff; width: 100%; max-width: 400px; border-radius: 30px; padding: 25px; text-align: center; color: white; box-shadow: 0 15px 35px rgba(0,0,0,0.4); position: relative; }
+        .container { background-color: #00a8ff; width: 100%; max-width: 400px; border-radius: 30px; padding: 25px; text-align: center; color: white; box-shadow: 0 15px 35px rgba(0,0,0,0.4); }
         
-        /* Header Section */
         .header { display: flex; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
         .logo-small { width: 60px; height: 60px; border-radius: 50%; background: white; margin-right: 15px; border: 2px solid white; object-fit: cover; }
         .header-text { text-align: left; }
         .header-text strong { font-size: 22px; display: block; }
         .header-text small { font-size: 14px; opacity: 0.9; }
 
-        /* Quiz UI */
         .q-count { font-size: 18px; margin-bottom: 10px; font-weight: 500; }
-        .question { font-size: 20px; font-weight: bold; margin-bottom: 25px; line-height: 1.5; min-height: 70px; text-align: left; }
+        .question { font-size: 19px; font-weight: bold; margin-bottom: 25px; line-height: 1.5; min-height: 70px; text-align: left; }
         .option { background: white; color: #333; padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; border: none; width: 100%; font-size: 16px; text-align: left; padding-left: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         
-        /* Answer Colors */
         .correct { background-color: #2ecc71 !important; color: white; }
         .wrong { background-color: #e74c3c !important; color: white; }
         
-        .next-btn { background: #1877F2; color: white; padding: 16px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 17px; display: none; transition: 0.3s; }
-        .next-btn:hover { background: #145dbf; }
-
-        /* Result Section */
-        .result-box { text-align: left; background: white; color: #333; padding: 20px; border-radius: 20px; margin-top: 20px; max-height: 250px; overflow-y: auto; box-shadow: inset 0 2px 10px rgba(0,0,0,0.1); }
+        .next-btn { background: #1877F2; color: white; padding: 16px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 17px; display: none; }
+        
+        .result-box { text-align: left; background: white; color: #333; padding: 20px; border-radius: 20px; margin-top: 20px; max-height: 250px; overflow-y: auto; }
         .summary-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 14px; }
         
-        /* Facebook Button Styles */
+        /* Facebook Button Center Styling */
         .button-container { text-align: center; width: 100%; margin-top: 20px; }
-        .fb-btn { background: #1877F2; color: white; padding: 15px 30px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-block; text-decoration: none; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        .fb-btn:hover { background: #145dbf; transform: translateY(-2px); }
+        .fb-btn { background: #1877F2; color: white; padding: 15px 30px; border-radius: 15px; cursor: pointer; font-weight: bold; font-size: 16px; display: inline-block; text-decoration: none; transition: 0.3s; }
+        .fb-btn:hover { background: #145dbf; transform: scale(1.03); }
         
-        .home-btn { background: white; color: #333; padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; display: block; text-decoration: none; transition: 0.3s; }
+        .home-btn { background: white; color: #333; padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; display: block; text-decoration: none; }
         
         .hidden { display: none; }
     </style>
@@ -48,20 +43,20 @@
         <img src="logo.png" class="logo-small" alt="Logo">
         <div class="header-text">
             <strong>IQ MIND</strong>
-            <small>General Knowledge Quiz</small>
+            <small>සාමාන්‍ය දැනීම (GK Quiz)</small>
         </div>
     </div>
 
     <div id="quiz-area">
-        <div class="q-count">Question <span id="current-q-num">1</span> of 20</div>
+        <div class="q-count">ප්‍රශ්නය <span id="current-q-num">1</span> / 10</div>
         <div class="question" id="question-text">පූරණය වෙමින් පවතී...</div>
         <div id="options-list"></div>
-        <button id="next-btn" class="next-btn" onclick="handleNext()">NEXT QUESTION</button>
+        <button id="next-btn" class="next-btn" onclick="handleNext()">මීළඟ ප්‍රශ්නය</button>
     </div>
 
     <div id="result-area" class="hidden">
-        <h2 style="margin:0; font-size: 26px;">Quiz Completed!</h2>
-        <h3 id="final-score" style="color: #fff; background: rgba(0,0,0,0.2); display: inline-block; padding: 10px 20px; border-radius: 10px; margin-top: 10px;">Score: 0%</h3>
+        <h2 style="margin:0; font-size: 26px;">ප්‍රතිඵලය</h2>
+        <h3 id="final-score" style="color: #fff; background: rgba(0,0,0,0.2); display: inline-block; padding: 10px 20px; border-radius: 10px; margin: 15px 0;">Score: 0%</h3>
         
         <div class="result-box" id="summary-content"></div>
         
@@ -71,32 +66,22 @@
             </a>
         </div>
         
-        <button class="home-btn" onclick="window.location.href='index.html'">GO TO HOME</button>
+        <button class="home-btn" onclick="window.location.href='index.html'">මුල් පිටුවට</button>
     </div>
 </div>
 
 <script>
     const questions = [
-        { q: "ශ්‍රී ලංකාවේ නිදහස් අධ්‍යාපන පනත රාජ්‍ය මන්ත්‍රණ සභාවට ඉදිරිපත් කළ වර්ෂය?", options: ["1943", "1947", "1939", "1951"], correct: 0 },
-        { q: "ශ්‍රී ලංකා විවෘත විශ්වවිද්‍යාලය (OUSL) ආරම්භ කරන ලද වර්ෂය කුමක්ද?", options: ["1978", "1980", "1982", "1972"], correct: 1 },
-        { q: "ජාතික අධ්‍යාපන ආයතනය (NIE) පිහිටා ඇත්තේ කොහේද?", options: ["කොළඹ", "මහරගම", "බත්තරමුල්ල", "නුගේගොඩ"], correct: 1 },
-        { q: "ලෝක සාක්ෂරතා දිනය යෙදී ඇත්තේ කවදාටද?", options: ["සැප්තැම්බර් 08", "ඔක්තෝබර් 05", "ජූනි 12", "නොවැම්බර් 20"], correct: 0 },
-        { q: "පාසලක 'ගුරු පැමිණීමේ ලේඛනය' භාරව කටයුතු කිරීමේ වගකීම ඇත්තේ?", options: ["විදුහල්පතිට", "නියෝජ්‍ය විදුහල්පතිට", "ලේඛකාධිකාරීට", "අංශ ප්‍රධානියාට"], correct: 1 },
-        { q: "පන්ති කාමරයක ඉගෙනුම්-ඉගැන්වීම් ක්‍රියාවලියේ 'කේන්ද්‍රය' විය යුත්තේ?", options: ["ගුරුවරයා", "විෂය මාලාව", "ශිෂ්‍යයා", "විදුහල්පති"], correct: 2 },
-        { q: "දකුණු ආසියාවේ විශාලතම නේවාසික විශ්වවිද්‍යාලය වන්නේ?", options: ["පේරාදෙණිය විශ්වවිද්‍යාලය", "කොළඹ විශ්වවිද්‍යාලය", "ජයවර්ධනපුර විශ්වවිද්‍යාලය", "රුහුණු විශ්වවිද්‍යාලය"], correct: 0 },
-        { q: "ශ්‍රී ලංකාවේ ප්‍රථම විශ්වවිද්‍යාලය (Ceylon University College) ආරම්භ වූයේ?", options: ["1942", "1921", "1950", "1901"], correct: 1 },
-        { q: "ගුරුවරයෙකුට හිමි විය හැකි උපරිම අනියම් නිවාඩු (Casual Leave) සංඛ්‍යාව?", options: ["21 කි", "20 කි", "40 කි", "10 කි"], correct: 1 },
-        { q: "ඉගෙනුම් ක්‍රියාවලියේදී 'සක්‍රීය ඉගෙනුම' (Active Learning) යන්නෙන් අදහස් වන්නේ?", options: ["ගුරුවරයාට සවන් දීම", "සටහන් පිටපත් කිරීම", "ප්‍රායෝගික ක්‍රියාකාරකම්වල නිරත වීම", "පොත් කියවීම"], correct: 2 },
-        { q: "ජාතික පාසල් පද්ධතිය පාලනය කරනු ලබන්නේ කා විසින්ද?", options: ["පළාත් අධ්‍යාපන දෙපාර්තමේන්තුව", "මධ්‍යම රජයේ අධ්‍යාපන අමාත්‍යාංශය", "කලාප අධ්‍යාපන කාර්යාලය", "පළාත් සභාව"], correct: 1 },
-        { q: "විෂය නිර්දේශයන් සැකසීමේ වගකීම පැවරී ඇත්තේ කුමන ආයතනයටද?", options: ["විභාග දෙපාර්තමේන්තුවට", "ජාතික අධ්‍යාපන ආයතනයට", "අධ්‍යාපන ප්‍රකාශන දෙපාර්තමේන්තුවට", "විශ්වවිද්‍යාල ප්‍රතිපාදන කොමිෂන් සභාවට"], correct: 1 },
-        { q: "පාසල් සංවර්ධන සමිතියක (SDA) නිල බලයෙන් සභාපතිත්වය දරන්නේ?", options: ["කලාප අධ්‍යාපන අධ්‍යක්ෂ", "විදුහල්පති", "පළාත් අධ්‍යාපන ලේකම්", "ගුරු නියෝජිතයා"], correct: 1 },
-        { q: "අධ්‍යාපනය යනු මිනිසා තුළ දැනටමත් පවතින දේවත්වය ප්‍රකට කිරීමයි' යැයි පැවසුවේ?", options: ["මහත්මා ගාන්ධි", "රබීන්ද්‍රනාත් තාගෝර්", "ස්වාමි විවේකානන්ද", "ප්ලේටෝ"], correct: 2 },
-        { q: "අධ්‍යාපන අමාත්‍යාංශය මගින් නිකුත් කරනු ලබන වාර සඟරාව වන්නේ?", options: ["ඉසුරු", "නැණස", "අධ්‍යාපන පුවත්", "පාසල"], correct: 0 },
-        { q: "මනෝවිද්‍යාවට අනුව 'සහජාත බුද්ධිය' (Innate Intelligence) පිළිබඳ සංකල්පය ඉදිරිපත් කළේ?", options: ["හොවාර්ඩ් ගාඩ්නර්", "සිග්මන්ඩ් ෆ්‍රොයිඩ්", "ජේ.පී. ගිල්ෆර්ඩ්", "රේමන්ඩ් කැටෙල්"], correct: 3 },
-        { q: "ගුරු විද්‍යාලයක (Teachers' College) පාඨමාලා කාලය සාමාන්‍යයෙන් වසර කීයද?", options: ["වසර 03 කි", "වසර 02 කි", "වසර 01 කි", "මාස 06 කි"], correct: 1 },
-        { q: "ළමුන් සඳහා වන අනිවාර්ය අධ්‍යාපන වයස් සීමාව වර්තමානයේදී?", options: ["වයස 5 - 14 දක්වා", "වයස 5 - 16 දක්වා", "වයස 6 - 16 දක්වා", "වයස 5 - 18 දක්වා"], correct: 1 },
-        { q: "පාසල් පද්ධතිය තුළ 'සුරක්ෂා' රක්ෂණාවරණය හඳුන්වා දුන් වර්ෂය?", options: ["2015", "2017", "2019", "2016"], correct: 1 },
-        { q: "ගුරු උපදේශක සේවය (Teacher Advisor Service) අයත් වන සේවා ගණය?", options: ["අධ්‍යාපන පරිපාලන සේවය", "ගුරු අධ්‍යාපනඥ සේවය", "ගුරු සේවය", "විශේෂ සේවා ගණය"], correct: 1 }
+        { q: "ශ්‍රී ලංකාවේ ප්‍රථම විධායක ජනාධිපතිවරයා කවුද?", options: ["සිරිමාවෝ බණ්ඩාරනායක", "ජේ.ආර්. ජයවර්ධන", "ආර්. ප්‍රේමදාස", "ඩී.එස්. සේනානායක"], correct: 1 },
+        { q: "ලෝකයේ විශාලතම මහාද්වීපය කුමක්ද?", options: ["අප්‍රිකාව", "යුරෝපය", "ආසියාව", "උතුරු ඇමරිකාව"], correct: 2 },
+        { q: "ශ්‍රී ලංකාවේ දිගම ගංගාව කුමක්ද?", options: ["කළු ගඟ", "වලවේ ගඟ", "මහවැලි ගඟ", "කැළණි ගඟ"], correct: 2 },
+        { q: "එක්සත් ජාතීන්ගේ සංවිධානය (UN) පිහිටුවන ලද්දේ කුමන වර්ෂයේදීද?", options: ["1945", "1948", "1950", "1939"], correct: 0 },
+        { q: "ශ්‍රී ලංකාවේ උසම කන්ද කුමක්ද?", options: ["ශ්‍රී පාදය", "නමුණුකුල", "පිදුරුතලාගල", "කනැහැල්ගල"], correct: 2 },
+        { q: "සූර්යග්‍රහ මණ්ඩලයේ විශාලතම ග්‍රහලෝකය කුමක්ද?", options: ["සිකුරු", "සෙනසුරු", "බ්‍රහස්පති", "අඟහරු"], correct: 2 },
+        { q: "ශ්‍රී ලංකාව සමූහාණ්ඩුවක් බවට පත් වූයේ කුමන වර්ෂයේදීද?", options: ["1948", "1956", "1972", "1978"], correct: 2 },
+        { q: "මානව හිමිකම් දිනය යෙදී ඇත්තේ කවදාටද?", options: ["දෙසැම්බර් 10", "ඔක්තෝබර් 24", "මැයි 01", "ජූනි 05"], correct: 0 },
+        { q: "ශ්‍රී ලංකාවේ ප්‍රථම අග්‍රාමාත්‍යවරයා කවුද?", options: ["ඩඩ්ලි සේනානායක", "එස්.ඩබ්ලිව්.ආර්.ඩී. බණ්ඩාරනායක", "ඩී.එස්. සේනානායක", "ජෝන් කොතලාවල"], correct: 2 },
+        { q: "ලෝකයේ කුඩාම රට කුමක්ද?", options: ["මෝල්ඩීව්ස්", "මොනාකෝ", "වතිකානු පුරය", "සැන් මරිනෝ"], correct: 2 }
     ];
 
     let currentIdx = 0;
@@ -114,7 +99,7 @@
         q.options.forEach((opt, i) => {
             const btn = document.createElement("button");
             btn.className = "option";
-            btn.innerText = opt;
+            btn.innerText = (i+1) + ". " + opt;
             btn.onclick = () => selectOption(i, btn);
             list.appendChild(btn);
         });
@@ -123,7 +108,6 @@
     function selectOption(index, element) {
         const correctIdx = questions[currentIdx].correct;
         const options = document.querySelectorAll(".option");
-        
         options.forEach(btn => btn.style.pointerEvents = "none");
 
         if(index === correctIdx) {
@@ -135,11 +119,8 @@
         }
 
         answersLog.push({ q: questions[currentIdx].q, correct: questions[currentIdx].options[correctIdx] });
-        
         document.getElementById("next-btn").style.display = "block";
-        if(currentIdx === questions.length - 1) {
-            document.getElementById("next-btn").innerText = "FINISH QUIZ";
-        }
+        if(currentIdx === questions.length - 1) document.getElementById("next-btn").innerText = "ප්‍රතිඵල බලන්න";
     }
 
     function handleNext() {
@@ -155,11 +136,11 @@
         document.getElementById("quiz-area").classList.add("hidden");
         document.getElementById("result-area").classList.remove("hidden");
         const percent = (score / questions.length) * 100;
-        document.getElementById("final-score").innerText = `Final Score: ${percent}% (${score}/${questions.length})`;
+        document.getElementById("final-score").innerText = `නිවැරදි පිළිතුරු: ${score} / ${questions.length} (${percent}%)`;
         
-        let summaryHtml = "<strong>Correct Answers Summary:</strong><br><br>";
+        let summaryHtml = "<strong>පිළිතුරු සාරාංශය:</strong><br><br>";
         answersLog.forEach((item, i) => {
-            summaryHtml += `<div class='summary-item'>${i+1}. ${item.q}<br><span style='color:#27ae60; font-weight:bold;'>Ans: ${item.correct}</span></div>`;
+            summaryHtml += `<div class='summary-item'>${i+1}. ${item.q}<br><span style='color:#27ae60; font-weight:bold;'>නිවැරදි පිළිතුර: ${item.correct}</span></div>`;
         });
         document.getElementById("summary-content").innerHTML = summaryHtml;
     }
