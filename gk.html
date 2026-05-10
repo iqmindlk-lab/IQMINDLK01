@@ -10,7 +10,6 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-
       gtag('config', 'G-JBMB0SY8T6');
     </script>
 
@@ -18,36 +17,32 @@
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #001f3f; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
         .container { background-color: #00a8ff; width: 100%; max-width: 400px; border-radius: 30px; padding: 25px; text-align: center; color: white; box-shadow: 0 15px 35px rgba(0,0,0,0.4); position: relative; }
-
         .header { display: flex; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
         .logo-small { width: 60px; height: 60px; border-radius: 50%; background: white; margin-right: 15px; border: 2px solid white; object-fit: cover; cursor: pointer; }
         .header-text { text-align: left; }
         .header-text strong { font-size: 22px; display: block; }
         .header-text small { font-size: 14px; opacity: 0.9; }
-
         .q-count { font-size: 18px; margin-bottom: 10px; font-weight: 500; }
-        .question { font-size: 20px; font-weight: bold; margin-bottom: 25px; line-height: 1.5; min-height: 70px; text-align: left; }
+        .question { font-size: 19px; font-weight: bold; margin-bottom: 25px; line-height: 1.5; min-height: 70px; text-align: left; }
         .option { background: white; color: #333; padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; border: none; width: 100%; font-size: 16px; text-align: left; padding-left: 25px; }
-
         .correct { background-color: #2ecc71 !important; color: white; }
         .wrong { background-color: #e74c3c !important; color: white; }
-
         .next-btn { background: #1877F2; color: white; padding: 16px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 17px; display: none; }
-
         .result-box { text-align: left; background: white; color: #333; padding: 20px; border-radius: 20px; margin-top: 20px; max-height: 250px; overflow-y: auto; }
-
         .summary-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 14px; }
-
         .home-btn { background: white; color: #333; padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; }
-
+        
+        /* නව බටන් එකේ ස්ටයිල් එක */
+        .retry-btn { background: #2ecc71; color: white; padding: 15px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        
+        .follow-btn { display: inline-block; padding: 12px 24px; background-color: #1877F2; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 20px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 80%; }
+        .follow-btn:hover { background-color: #145dbf; transform: scale(1.05); color: white; }
         .hidden { display: none; }
     </style>
 </head>
-
 <body>
 
 <div class="container">
-
     <div class="header">
         <img src="logo.png" class="logo-small" onclick="goHome()" alt="Logo">
         <div class="header-text">
@@ -57,7 +52,7 @@
     </div>
 
     <div id="quiz-area">
-        <div class="q-count">Question <span id="current-q-num">1</span> of 20</div>
+        <div class="q-count">Question <span id="current-q-num">1</span> of 10</div>
         <div class="question" id="question-text"></div>
         <div id="options-list"></div>
         <button id="next-btn" class="next-btn" onclick="handleNext()">NEXT QUESTION</button>
@@ -66,21 +61,21 @@
     <div id="result-area" class="hidden">
         <h2>Quiz Completed!</h2>
         <h3 id="final-score"></h3>
-
         <div class="result-box" id="summary-content"></div>
-
+        
+        <!-- නව බොත්තම මෙතැනට ඇතුළත් කර ඇත -->
+        <button class="retry-btn" onclick="restartQuiz()">තවත් ගැටලු 10ක් උත්සහ කරන්න</button>
+        
+        <a href="https://web.facebook.com/iqmind.lk/" target="_blank" class="follow-btn">Follow us on IQ Mind</a>
         <button class="home-btn" onclick="goHome()">🏠 Home</button>
     </div>
-
 </div>
 
 <script>
-function goHome(){
-    window.location.href = "index.html";
-}
+function goHome(){ window.location.href = "index.html"; }
 
-const questions = [
-        { q: "ශ්‍රී ලංකාවේ නොමිලේ පෙළපොත් ලබා දීමේ වැඩසටහන ආරම්භ කරන ලද්දේ කුමන වර්ෂයේදීද?", options: ["1945", "1980", "1951", "1990"], correct: 1 },
+const quizData = [
+    	{ q: "ශ්‍රී ලංකාවේ නොමිලේ පෙළපොත් ලබා දීමේ වැඩසටහන ආරම්භ කරන ලද්දේ කුමන වර්ෂයේදීද?", options: ["1945", "1980", "1951", "1990"], correct: 1 },
         { q: "ළමා අයිතිවාසිකම් පිළිබඳ ප්‍රඥප්තිය (UNCRC) එක්සත් ජාතීන්ගේ මහා මණ්ඩලය විසින් සම්මත කරගනු ලැබුවේ කවදාද?", options: ["1989 නොවැම්බර් 20", "1990 ජනවාරි 01", "1948 දෙසැම්බර් 10", "1950 මැයි 01"], correct: 0 },
         { q: "පාසලක ව්‍යුහය තුළ 'සමෘද්ධිමත් පාසලක්' නිර්මාණය කිරීමේදී මූලිකවම සැලකිල්ලට ගනු ලබන දර්ශකය වනුයේ,", options: ["භෞතික සම්පත් ප්‍රමාණය", "ශිෂ්‍ය සාධන මට්ටම", "ගුරුවරුන්ගේ සංඛ්‍යාව", "පාසලේ ඉතිහාසය"], correct: 1 },
         { q: "මධ්‍යම මහා විද්‍යාල සංකල්පයේ නිර්මාතෘවරයා ලෙස සැලකෙන්නේ,", options: ["ශ්‍රීමත් බාරොන් ජයතිලක", "සී.ඩබ්ලිව්.ඩබ්ලිව්. කන්නන්ගර මහතා", "ඒ. රත්නායක මහතා", "එස්.ඩබ්ලිව්.ආර්.ඩී. බණ්ඩාරනායක මහතා"], correct: 1 },
@@ -99,22 +94,50 @@ const questions = [
         { q: "'STEM' අධ්‍යාපනය යන්නෙහි 'M' අකුරෙන් අදහස් වන්නේ,", options: ["Management", "Mathematics", "Mechanics", "Modernity"], correct: 1 },
         { q: "ශිෂ්‍යත්ව විභාගය පවත්වනු ලබන රජයේ ආයතනය කුමක්ද?", options: ["ජාතික අධ්‍යාපන ආයතනය", "අධ්‍යාපන ප්‍රකාශන දෙපාර්තමේන්තුව", "ශ්‍රී ලංකා විභාග දෙපාර්තමේන්තුව", "තොරතුරු තාක්ෂණ ආයතනය"], correct: 2 },
         { q: "ගුරුවරයෙකු සතු විය යුතු 'සන්නිවේදන කුසලතාව' යනු,", options: ["උච්ච ශබ්දයෙන් කතා කිරීම", "කරුණු පැහැදිලිව සහ තර්කානුකූලව ඉදිරිපත් කිරීම", "පොතේ ඇති දේ කියවීම", "ඉංග්‍රීසි භාෂාවෙන් පමණක් කතා කිරීම"], correct: 1 },
-        { q: "පාසල් පද්ධතිය තුළ '1C' වර්ගයේ පාසලක් ලෙස හඳුන්වන්නේ,", options: ["උසස් පෙළ විද්‍යා විෂය ධාරාව ඇති පාසල්", "උසස් පෙළ කලා සහ වාණිජ විෂය ධාරා පමණක් ඇති පාසල්", "1 - 11 ශ්‍රේණි දක්වා පමණක් ඇති පාසල්", "ප්‍රාථමික අංශය පමණක් ඇති පාසල්"], correct: 1 }
-    ];
+        { q: "පාසල් පද්ධතිය තුළ '1C' වර්ගයේ පාසලක් ලෙස හඳුන්වන්නේ,", options: ["උසස් පෙළ විද්‍යා විෂය ධාරාව ඇති පාසල්", "උසස් පෙළ කලා සහ වාණිජ විෂය ධාරා පමණක් ඇති පාසල්", "1 - 11 ශ්‍රේණි දක්වා පමණක් ඇති පාසල්", "ප්‍රාථමික අංශය පමණක් ඇති පාසල්"], correct: 1 },
+    	{ q: "යුනෙස්කෝ සංවිධානය මඟින් 'සැමට අධ්‍යාපනය' (EFA) ප්‍රකාශනය (ජොම්ටීන්) වර්ෂය?", options: ["1985", "1990", "1995", "2000"], correct: 1 },
+    	{ q: "ශ්‍රී ලංකාවේ 'නිදහස් අධ්‍යාපන පනත' රාජ්‍ය මන්ත්‍රණ සභාවට ඉදිරිපත් කළ වර්ෂය?", options: ["1943", "1944", "1945", "1947"], correct: 0 },
+    	{ q: "UNCRC සම්මත කළ වර්ෂය?", options: ["1959", "1979", "1989", "1991"], correct: 2 },
+    	{ q: "පාසල් සිසුන්ට නොමිලේ පෙළපොත් වැඩසටහන ආරම්භ වූ වර්ෂය?", options: ["1970", "1980", "1985", "1990"], correct: 1 },
+    	{ q: "Dakar Framework සකස් කළ වර්ෂය?", options: ["1990", "1998", "2000", "2005"], correct: 2 },
+    	{ q: "නොමිලේ පාසල් නිල ඇඳුම් වැඩසටහන ආරම්භ වූ වර්ෂය?", options: ["1990", "1993", "1995", "1997"], correct: 1 },
+    	{ q: "MDG ප්‍රකාශයට පත් කළ වර්ෂය?", options: ["1995", "2000", "2005", "2010"], correct: 1 },
+    	{ q: "NEC පිහිටුවන ලද්දේ?", options: ["1961", "1981", "1991", "2001"], correct: 2 },
+    	{ q: "SDG 4 (ගුණාත්මක අධ්‍යාපනය) හඳුන්වා දුන් වර්ෂය?", options: ["2012", "2015", "2018", "2020"], correct: 1 },
+    	{ q: "අනිවාර්ය අධ්‍යාපන රෙගුලාසි වයස 5-14 ප්‍රකාශිත වර්ෂය?", options: ["1990", "1997", "2000", "2006"], correct: 1 },
+    	{ q: "Salamanca Statement නිකුත් කළ වර්ෂය?", options: ["1990", "1994", "1998", "2002"], correct: 1 },
+    	{ q: "NIE පිහිටුවූ වර්ෂය?", options: ["1980", "1985", "1986", "1990"], correct: 2 },
+    	{ q: "Life Skills Education (WHO) හඳුන්වා දුන් වර්ෂය?", options: ["1990", "1993", "1997", "2003"], correct: 1 },
+    	{ q: "SLEAS ආරම්භ වූ වර්ෂය?", options: ["1960", "1963", "1966", "1970"], correct: 1 },
+    	{ q: "SBM හඳුන්වා දුන් වර්ෂය?", options: ["2000", "2003", "2007", "2010"], correct: 1 },
+    	{ q: "Child Friendly Schools ආරම්භ කාලය?", options: ["1990 දශකයේ අග", "2002", "2010", "2015"], correct: 1 },
+    	{ q: "Grade 5 Scholarship ආරම්භ වූ වර්ෂය?", options: ["1948", "1950", "1944", "1960"], correct: 2 },
+    	{ q: "OUSL ආරම්භ වූ වර්ෂය?", options: ["1978", "1980", "1982", "1985"], correct: 1 },
+    	{ q: "13 Year Education Programme හඳුන්වා දුන් වර්ෂය?", options: ["2015", "2016", "2017", "2019"], correct: 2 },
+    	{ q: "පාසල් වෛද්‍ය සේවය ආරම්භ වූ වර්ෂය?", options: ["1913", "1918", "1925", "1948"], correct: 1 }
+	];
 
+let questions = [];
 let currentIdx = 0;
 let score = 0;
 let answersLog = [];
+
+function prepareQuestions() {
+    let allQuestions = [...quizData];
+    for (let i = allQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+    }
+    questions = allQuestions.slice(0, 10);
+}
 
 function loadQuestion(){
     const q = questions[currentIdx];
     document.getElementById("current-q-num").innerText = currentIdx + 1;
     document.getElementById("question-text").innerText = q.q;
-
     const list = document.getElementById("options-list");
     list.innerHTML = "";
     document.getElementById("next-btn").style.display = "none";
-
     q.options.forEach((opt,i)=>{
         const btn = document.createElement("button");
         btn.className = "option";
@@ -127,11 +150,8 @@ function loadQuestion(){
 function selectOption(index,element){
     const correctIdx = questions[currentIdx].correct;
     const options = document.querySelectorAll(".option");
-
     options.forEach(b=>b.style.pointerEvents="none");
-
     let isCorrect = index === correctIdx;
-
     if(isCorrect){
         element.classList.add("correct");
         score++;
@@ -139,13 +159,7 @@ function selectOption(index,element){
         element.classList.add("wrong");
         options[correctIdx].classList.add("correct");
     }
-
-    answersLog.push({
-        q: questions[currentIdx].q,
-        correct: questions[currentIdx].options[correctIdx],
-        isCorrect: isCorrect
-    });
-
+    answersLog.push({ q: questions[currentIdx].q, correct: questions[currentIdx].options[correctIdx], isCorrect: isCorrect });
     document.getElementById("next-btn").style.display = "block";
 }
 
@@ -161,28 +175,31 @@ function handleNext(){
 function showResults(){
     document.getElementById("quiz-area").classList.add("hidden");
     document.getElementById("result-area").classList.remove("hidden");
-
     const percent = Math.round((score/questions.length)*100);
-    document.getElementById("final-score").innerText =
-        `Score: ${score}/${questions.length} (${percent}%)`;
-
+    document.getElementById("final-score").innerText = `Score: ${score}/${questions.length} (${percent}%)`;
     let html = "<strong>Wrong Answers Only:</strong><br><br>";
-
-    answersLog.forEach((item,i)=>{
+    let hasWrong = false;
+    answersLog.forEach((item)=>{
         if(!item.isCorrect){
-            html += `
-            <div class='summary-item'>
-                ${i+1}. ${item.q}<br>
-                <span style='color:red;font-weight:bold'>
-                    Correct: ${item.correct}
-                </span>
-            </div>`;
+            hasWrong = true;
+            html += `<div class='summary-item'>${item.q}<br><span style='color:red;font-weight:bold'>Correct: ${item.correct}</span></div>`;
         }
     });
-
-    document.getElementById("summary-content").innerHTML = html;
+    document.getElementById("summary-content").innerHTML = hasWrong ? html : "All correct! Well done.";
 }
 
+// නැවත ආරම්භ කිරීමේ function එක
+function restartQuiz() {
+    currentIdx = 0;
+    score = 0;
+    answersLog = [];
+    document.getElementById("result-area").classList.add("hidden");
+    document.getElementById("quiz-area").classList.remove("hidden");
+    prepareQuestions();
+    loadQuestion();
+}
+
+prepareQuestions();
 loadQuestion();
 </script>
 
