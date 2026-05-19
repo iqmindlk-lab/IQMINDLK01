@@ -69,11 +69,34 @@
             transform: scale(1.02);
         }
 
+        /* ✨ PRO IQ Button Styles */
+        .pro-btn {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            color: white;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(255, 65, 108, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .pro-btn:hover {
+            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+            box-shadow: 0 8px 20px rgba(255, 65, 108, 0.6);
+            transform: scale(1.04);
+            color: white;
+        }
+
         .fb-btn {
             background: #1877F2;
             color: white;
             margin-top: 25px;
             font-size: 15px;
+        }
+        
+        .fb-btn:hover {
+            background: #145dbf;
+            color: white;
         }
     </style>
 </head>
@@ -83,6 +106,11 @@
         <img src="logo.png" alt="IQ MIND Logo" class="logo-img">
 
         <h1>IQ MIND</h1>
+
+        <!-- 👑 PRO IQ බටන් එක - proiq.html පිටුවට Link කර ඇත -->
+        <a href="proiq.html" class="btn pro-btn">
+            👑 PRO IQ
+        </a>
 
         <a href="gk.html" class="btn">
             GK (සාමාන්‍ය දැනීම)
@@ -99,7 +127,7 @@
         <a href="https://www.facebook.com/iqmind.lk"
            class="btn fb-btn"
            target="_blank">
-           Follow IQ MIND on Facebook
+            Follow IQ MIND on Facebook
         </a>
     </div>
 </body>
