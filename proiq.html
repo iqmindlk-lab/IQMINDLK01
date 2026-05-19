@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ MIND - PRO Portal</title>
+    <style>
+        body { 
+            font-family: 'Poppins', Arial, sans-serif; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            background-color: #001f3f; 
+            color: white; 
+            margin: 0; 
+        }
+        .container { 
+            text-align: center; 
+            background: #00a8ff; 
+            padding: 40px; 
+            border-radius: 25px; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
+            width: 320px; 
+        }
+        h3 {
+            margin-top: 0;
+            font-size: 22px;
+        }
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            margin: 20px 0; 
+            border: 2px solid #ffffff; 
+            border-radius: 12px; 
+            background: #ffffff; 
+            color: #333; 
+            font-size: 16px; 
+            text-align: center; 
+            box-sizing: border-box; 
+            font-weight: bold;
+        }
+        input:focus { 
+            border-color: #ff4b2b; 
+            outline: none; 
+        }
+        .submit-btn { 
+            width: 100%; 
+            padding: 15px; 
+            background: linear-gradient(45deg, #ff416c, #ff4b2b); 
+            color: white; 
+            border: none; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+            transition: 0.3s;
+        }
+        .submit-btn:hover {
+            transform: scale(1.02);
+            background: linear-gradient(45deg, #ff4b2b, #ff416c); 
+        }
+        .error { 
+            color: #ff3333; 
+            font-size: 14px; 
+            margin-top: 15px; 
+            font-weight: bold; 
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            border-radius: 8px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h3>Enter Your PRO ID</h3>
+    <p style="font-size: 14px; margin-top: -10px; color: #f0f0f0;">WhatsApp හරහා ඔබට ලැබුණු ID එක ඇතුළත් කරන්න.</p>
+    
+    <input type="text" id="userId" placeholder="PRO-XXXX" autocomplete="off">
+    <button class="submit-btn" onclick="checkAccess()">ENTER SITE</button>
+    
+    <p class="error" id="errorMsg"></p>
+</div>
+
+<!-- Firebase SDKs -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  // ඔයා ලබාදුන්න නිවැරදි Firebase Config එක
+  const firebaseConfig = {
+    apiKey: "AIzaSyBHgRwGTk_YF11byElDa5dH_GkODzuE2JY",
+    authDomain: "iq-pro-8661d.firebaseapp.com",
+    projectId: "iq-pro-8661d",
+    storageBucket: "iq-pro-8661d.firebasestorage.app",
+    messagingSenderId: "825067863061",
+    appId: "1:825067863061:web:9100baf84c85e2984e221c",
+    measurementId: "G-HSL89D29GR"
+  };
+
+  // Firebase Initialize කිරීම
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ID එක Check කරන Function එක
+  window.checkAccess = async function() {
+      const typedId = document.getElementById("userId").value.trim();
+      const errorField = document.getElementById("errorMsg");
+      
+      errorField.style.display = "none";
+      errorField.innerText = ""; 
+
+      if(typedId === "") {
+          errorField.innerText = "කරුණාකර ID එක ඇතුළත් කරන්න!";
+          errorField.style.display = "block";
+          return;
+      }
+
+      try {
+          // Firestore එකේ allowed_users collection එක ඇතුළේ මේ ID එක තියෙනවද බලනවා
+          const docRef = doc(db, "allowed_users", typedId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+              // ID එක හරියටම තිබුනොත් මේ පිටුවට යනවා:
+              window.location.href = "pro-questions.html"; 
+          } else {
+              // ID එක වැරදියි නම් පෙන්වන මැසේජ් එක
+              errorField.innerText = "වැරදි User ID එකක්! කරුණාකර WhatsApp Admin අමතන්න.";
+              errorField.style.display = "block";
+          }
+      } catch (error) {
+          console.error(error);
+          errorField.innerText = "සම්බන්ධතා දෝෂයකි. නැවත උත්සාහ කරන්න!";
+          errorField.style.display = "block";
+      }
+  }
+</script>
+
+</body>
+</html>
