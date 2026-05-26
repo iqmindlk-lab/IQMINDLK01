@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JBMB0SY8T6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -87,6 +86,29 @@
             color: white;
         }
 
+        /* 📄 Gazette Button Styles (කොළ පාට බටන් එක) */
+        .gazette-btn {
+            background: linear-gradient(135deg, #20bf6b, #059669);
+            color: white;
+            box-shadow: 0 5px 15px rgba(32, 191, 107, 0.3);
+            padding: 10px 15px; /* ඇතුළත අකුරු පේළි දෙකක් නිසා padding පොඩ්ඩක් අඩු කළා */
+        }
+
+        .gazette-btn:hover {
+            background: linear-gradient(135deg, #059669, #20bf6b);
+            box-shadow: 0 8px 20px rgba(32, 191, 107, 0.5);
+            color: white;
+        }
+
+        /* ℹ️ බටන් එක ඇතුළේ යටින්ම පෙනෙන කුඩා අකුරු පෙළ සඳහා */
+        .gazette-subtext {
+            display: block;
+            font-size: 11px; /* අකුරු පොඩියට තැබීමට */
+            font-weight: normal; /* මහත අකුරු (Bold) ඉවත් කිරීමට */
+            opacity: 0.85; /* සුදු පැහැය තරමක් සියුම් කිරීමට */
+            margin-top: 4px; /* ප්‍රධාන මාතෘකාව සහ මේක අතර පරතරය */
+        }
+
         .fb-btn {
             background: #1877F2;
             color: white;
@@ -107,9 +129,13 @@
 
         <h1>IQ MIND</h1>
 
-        <!-- 👑 PRO IQ බටන් එක - proiq.html පිටුවට Link කර ඇත -->
         <a href="proiq.html" class="btn pro-btn">
             👑 IQ MIND PRO
+        </a>
+
+        <a href="https://applications.doenets.lk/exams" class="btn gazette-btn" target="_blank">
+            📄 ගැසට් (Gazette)
+            <span class="gazette-subtext">විභාග දෙපාර්තමේන්තුවේ නිල විභාග අයදුම්පත් පිටුව</span>
         </a>
 
         <a href="gk.html" class="btn">
