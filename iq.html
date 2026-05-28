@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-JBMB0SY8T6"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -22,6 +21,10 @@
         .header-text { text-align: left; }
         .header-text strong { font-size: 22px; display: block; }
         .header-text small { font-size: 14px; opacity: 0.9; }
+        
+        /* ටයිමර් එක සඳහා එක් කළ ස්ටයිල් */
+        .timer-box { font-size: 20px; font-weight: bold; background-color: #e74c3c; color: white; padding: 6px 15px; border-radius: 20px; display: inline-block; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        
         .q-count { font-size: 18px; margin-bottom: 10px; font-weight: 500; }
         .question { font-size: 19px; font-weight: bold; margin-bottom: 25px; line-height: 1.5; min-height: 70px; text-align: left; }
         .option { background: white; color: #333; padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; border: none; width: 100%; font-size: 16px; text-align: left; padding-left: 25px; }
@@ -32,7 +35,6 @@
         .summary-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 14px; }
         .home-btn { background: white; color: #333; padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; }
         
-        /* නව බටන් එකේ ස්ටයිල් එක */
         .retry-btn { background: #2ecc71; color: white; padding: 15px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 16px; }
         
         .follow-btn { display: inline-block; padding: 12px 24px; background-color: #1877F2; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 20px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 80%; }
@@ -47,11 +49,13 @@
         <img src="logo.png" class="logo-small" onclick="goHome()" alt="Logo">
         <div class="header-text">
             <strong>IQ MIND</strong>
-            <small>General Knowledge Quiz</small>
+            <small>Intelligence Quotient Quiz</small>
         </div>
     </div>
 
     <div id="quiz-area">
+        <div class="timer-box">⏱️ තත්පර: <span id="time-left">30</span></div>
+        
         <div class="q-count">Question <span id="current-q-num">1</span> of 10</div>
         <div class="question" id="question-text"></div>
         <div id="options-list"></div>
@@ -63,7 +67,6 @@
         <h3 id="final-score"></h3>
         <div class="result-box" id="summary-content"></div>
         
-        <!-- නව බොත්තම මෙතැනට ඇතුළත් කර ඇත -->
         <button class="retry-btn" onclick="restartQuiz()">තවත් ගැටලු 10ක් උත්සහ කරන්න</button>
         
         <a href="https://web.facebook.com/iqmind.lk/" target="_blank" class="follow-btn">Follow us on IQ Mind</a>
@@ -122,6 +125,10 @@ let currentIdx = 0;
 let score = 0;
 let answersLog = [];
 
+/* ටයිමර් එක සඳහා විචල්‍යයන් (Variables) */
+let timerInterval;
+let timeLeft = 15;
+
 function prepareQuestions() {
     let allQuestions = [...quizData];
     for (let i = allQuestions.length - 1; i > 0; i--) {
@@ -131,7 +138,46 @@ function prepareQuestions() {
     questions = allQuestions.slice(0, 10);
 }
 
+// ටයිමර් එක ආරම්භ කරන Function එක
+function startTimer() {
+    clearInterval(timerInterval); // කලින් දිවෙමින් තිබූ ටයිමර් නවත්වන්න
+    timeLeft = 15; // කාලය තත්පර 15 ලෙස සැකසීම
+    document.getElementById("time-left").innerText = timeLeft;
+
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time-left").innerText = timeLeft;
+
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeOut(); // කාලය අවසන් වූ විට ක්‍රියාත්මක වන කොටස
+        }
+    }, 1000);
+}
+
+// කාලය ඉවර වූ විට සිදුවන දේ
+function handleTimeOut() {
+    const correctIdx = questions[currentIdx].correct;
+    const options = document.querySelectorAll(".option");
+    
+    // සියලු බටන්ස් ක්ලික් කළ නොහැකි ලෙස අක්‍රිය කිරීම
+    options.forEach(b => b.style.pointerEvents = "none");
+    
+    // නිවැරදි පිළිතුර කොළ පාටින් පෙන්වීම
+    options[correctIdx].classList.add("correct");
+
+    // ලොග් එකට වැරදි පිළිතුරක් ලෙස ඇතුළත් කිරීම
+    answersLog.push({ 
+        q: questions[currentIdx].q, 
+        correct: questions[currentIdx].options[correctIdx], 
+        isCorrect: false 
+    });
+
+    document.getElementById("next-btn").style.display = "block";
+}
+
 function loadQuestion(){
+    startTimer(); // ප්‍රශ්නයක් ලෝඩ් වන විට ටයිමර් එක පටන් ගන්න
     const q = questions[currentIdx];
     document.getElementById("current-q-num").innerText = currentIdx + 1;
     document.getElementById("question-text").innerText = q.q;
@@ -148,6 +194,7 @@ function loadQuestion(){
 }
 
 function selectOption(index,element){
+    clearInterval(timerInterval); // පරිශීලකයා පිළිතුරක් තෝරාගත් පසු ටයිමර් එක නවත්වන්න
     const correctIdx = questions[currentIdx].correct;
     const options = document.querySelectorAll(".option");
     options.forEach(b=>b.style.pointerEvents="none");
@@ -173,6 +220,7 @@ function handleNext(){
 }
 
 function showResults(){
+    clearInterval(timerInterval); // ප්‍රතිඵල පෙන්වන විට ටයිමර් එක සම්පූර්ණයෙන්ම නවත්වන්න
     document.getElementById("quiz-area").classList.add("hidden");
     document.getElementById("result-area").classList.remove("hidden");
     const percent = Math.round((score/questions.length)*100);
@@ -188,7 +236,6 @@ function showResults(){
     document.getElementById("summary-content").innerHTML = hasWrong ? html : "All correct! Well done.";
 }
 
-// නැවත ආරම්භ කිරීමේ function එක
 function restartQuiz() {
     currentIdx = 0;
     score = 0;
