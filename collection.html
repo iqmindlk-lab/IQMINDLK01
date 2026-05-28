@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>විභාග එකතුව - IQ MIND</title>
+    <style>
+        /* මුළු පිටුවේම පසුබිම සහ පෙනුම සකස් කිරීම */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0d1b2a; /* තද නිල් පැහැති පසුබිම */
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* මැද තිබෙන කාඩ් එකේ (Container) පෙනුම */
+        .container {
+            background-color: #00b4d8; /* ලා නිල් පැහැති කාඩ් එක */
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+            width: 350px;
+            text-align: center;
+        }
+
+        /* ලෝගෝ එක සකස් කිරීම */
+        .logo-img {
+            width: 80px; /* ලෝගෝ එකේ ප්‍රමාණය (අවශ්‍ය පරිදි වෙනස් කරන්න) */
+            height: 80px;
+            border-radius: 50%; /* රවුම් හැඩයක් ලබා ගැනීමට */
+            background-color: #ffffff;
+            padding: 5px;
+            margin-bottom: 15px;
+            object-fit: contain;
+        }
+
+        /* ප්‍රධාන මාතෘකාව */
+        h2 {
+            color: #ffffff;
+            margin: 0 0 20px 0;
+            font-size: 22px;
+        }
+
+        /* සාමාන්‍ය බටන් එකක පෙනුම */
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px 0;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #0d1b2a;
+            background-color: #ffffff;
+            text-decoration: none;
+            border-radius: 10px;
+            box-sizing: border-box;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        /* සාමාන්‍ය බටන් වලට මවුස් එක ගෙනියන විට (Hover Effect) */
+        .btn:hover {
+            background-color: #e0f7fa;
+            transform: scale(1.03);
+        }
+
+        /* ෆේස්බුක් බටන් එකේ විශේෂ පෙනුම */
+        .btn-fb {
+            background-color: #1877f2; /* ෆේස්බුක් නිල් පැහැය */
+            color: #ffffff;            /* සුදු පැහැති අකුරු */
+            margin-top: 25px;          /* අනෙක් බටන් වලින් ටිකක් ඈත් කිරීමට */
+            font-size: 14px;
+        }
+
+        /* ෆේස්බුක් බටන් එකට මවුස් එක ගෙනියන විට */
+        .btn-fb:hover {
+            background-color: #145dbf;
+            color: #ffffff;
+            transform: scale(1.03);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <img src="logo.png" alt="IQ MIND Logo" class="logo-img">
+        
+        <h2>විභාග තෝරන්න</h2>
+        
+        <a href="guruexam.html" class="btn">ගුරු විභාගය</a>
+        <a href="reguexam.html" class="btn">රේගු විභාගය</a>
+        <a href="govijanaexam.html" class="btn">ගොවිජන සංවර්ධන නිලධාරී විභාගය</a>
+        
+        <a href="https://www.facebook.com/your-page-link" target="_blank" class="btn btn-fb">Follow IQ MIND on Facebook</a>
+    </div>
+
+</body>
+</html>
