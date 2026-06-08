@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ MIND PRO - රූප ලැටල Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06031f;
+            --card: #0d0a2e;
+            --blue: #00a8ff;
+            --red: #ff416c;
+            --green: #00c851;
+            --orange: #f7971e;
+            --purple: #a855f7;
+            --text: #ffffff;
+            --muted: rgba(255,255,255,0.55);
+            --border: rgba(255,255,255,0.10);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', 'Noto Sans Sinhala', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 15% 20%, rgba(0,168,255,0.10) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 80%, rgba(168,85,247,0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .screen { display: none; }
+        .screen.active { display: block; }
+
+        /* ===== TOP BAR ===== */
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(6,3,31,0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            background: rgba(255,255,255,0.07);
+            border-radius: 8px;
+            padding: 7px 12px;
+            transition: 0.2s;
+            border: none; cursor: pointer;
+        }
+        .back-btn:hover { color: #fff; background: rgba(255,255,255,0.13); }
+
+        .timer-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            border-radius: 12px;
+            padding: 8px 16px;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 16px rgba(255,65,108,0.40);
+        }
+        .timer-box.warning { animation: timerPulse 0.8s ease-in-out infinite; }
+        @keyframes timerPulse {
+            0%, 100% { box-shadow: 0 4px 16px rgba(255,65,108,0.40); }
+            50% { box-shadow: 0 4px 28px rgba(255,65,108,0.85); }
+        }
+
+        .progress-info {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+            text-align: right;
+            line-height: 1.3;
+        }
+        .progress-info strong { color: var(--blue); font-size: 14px; }
+
+        .progress-wrap {
+            height: 4px;
+            background: rgba(255,255,255,0.08);
+            position: sticky;
+            top: 57px;
+            z-index: 99;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--purple), var(--blue));
+            transition: width 0.4s ease;
+        }
+
+        /* ===== QUIZ CONTENT ===== */
+        .quiz-content {
+            padding: 20px 16px 40px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        /* ===== QUESTION CARD ===== */
+        .question-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 0 0 18px;
+            margin-bottom: 18px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        .question-card.answered-correct { border-color: rgba(0,200,81,0.5); }
+        .question-card.answered-wrong { border-color: rgba(255,65,108,0.4); }
+
+        /* ===== IMAGE AREA ===== */
+        .question-image-wrap {
+            width: 100%;
+            background: rgba(0,0,0,0.35);
+            border-radius: 20px 20px 0 0;
+            overflow: hidden;
+            position: relative;
+            min-height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .question-image-wrap img {
+            width: 100%;
+            max-height: 260px;
+            object-fit: contain;
+            display: block;
+            transition: opacity 0.4s;
+        }
+
+        /* Image placeholder when image fails to load */
+        .img-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            min-height: 180px;
+            background: linear-gradient(135deg, rgba(0,168,255,0.08), rgba(168,85,247,0.08));
+            gap: 10px;
+        }
+        .img-placeholder i {
+            font-size: 40px;
+            color: rgba(255,255,255,0.15);
+        }
+        .img-placeholder span {
+            font-size: 12px;
+            color: rgba(255,255,255,0.25);
+            font-weight: 600;
+        }
+
+        /* Image badge */
+        .img-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(6px);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 8px;
+            padding: 4px 10px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* ===== QUESTION TEXT AREA ===== */
+        .question-body {
+            padding: 16px 20px 0;
+        }
+
+        .q-number {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--purple);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .q-number .q-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: var(--purple);
+            box-shadow: 0 0 8px var(--purple);
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 700;
+            line-height: 1.65;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+
+        /* ===== OPTIONS ===== */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 16px;
+            border-radius: 13px;
+            background: rgba(255,255,255,0.05);
+            border: 1.5px solid rgba(255,255,255,0.10);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .option-label:hover {
+            background: rgba(168,85,247,0.12);
+            border-color: rgba(168,85,247,0.40);
+        }
+        .option-label input[type="radio"] { display: none; }
+
+        .option-letter {
+            width: 30px; height: 30px;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.08);
+            border: 1.5px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--muted);
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+
+        .option-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.85);
+            line-height: 1.45;
+        }
+
+        .option-label.selected {
+            background: rgba(168,85,247,0.18);
+            border-color: var(--purple);
+        }
+        .option-label.selected .option-letter {
+            background: var(--purple);
+            border-color: var(--purple);
+            color: #fff;
+        }
+        .option-label.selected .option-text { color: #fff; }
+
+        .option-label.show-correct {
+            background: rgba(0,200,81,0.15);
+            border-color: var(--green);
+        }
+        .option-label.show-correct .option-letter {
+            background: var(--green);
+            border-color: var(--green);
+            color: #fff;
+        }
+
+        .option-label.show-wrong {
+            background: rgba(255,65,108,0.15);
+            border-color: var(--red);
+        }
+        .option-label.show-wrong .option-letter {
+            background: var(--red);
+            border-color: var(--red);
+            color: #fff;
+        }
+
+        /* ===== SUBMIT BAR ===== */
+        .submit-bar {
+            position: sticky;
+            bottom: 0;
+            background: rgba(6,3,31,0.95);
+            backdrop-filter: blur(12px);
+            border-top: 1px solid var(--border);
+            padding: 16px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .answered-count {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 600;
+            flex: 1;
+            line-height: 1.4;
+        }
+        .answered-count strong { color: var(--orange); }
+
+        .submit-btn {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--purple), #7c3aed);
+            border: none;
+            border-radius: 14px;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(168,85,247,0.40);
+            transition: 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .submit-btn:hover { transform: scale(1.03); box-shadow: 0 8px 28px rgba(168,85,247,0.55); }
+
+        /* ===== RESULTS ===== */
+        #resultScreen {
+            padding: 24px 16px 60px;
+            max-width: 640px;
+            margin: 0 auto;
+        }
+
+        .result-header {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            border-radius: 24px;
+            padding: 30px 24px 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 12px 40px rgba(168,85,247,0.35);
+            position: relative;
+            overflow: hidden;
+        }
+        .result-header::after {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 120px; height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+
+        .result-emoji { font-size: 52px; display: block; margin-bottom: 10px; }
+        .result-percent {
+            font-size: 58px;
+            font-weight: 900;
+            line-height: 1;
+            color: #fff;
+            text-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .result-label { font-size: 14px; color: rgba(255,255,255,0.80); font-weight: 600; margin-top: 6px; }
+        .result-grade {
+            display: inline-block;
+            margin-top: 14px;
+            background: rgba(255,255,255,0.18);
+            border-radius: 20px;
+            padding: 6px 20px;
+            font-size: 16px;
+            font-weight: 900;
+            letter-spacing: 1px;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px 12px;
+            text-align: center;
+        }
+        .stat-icon { font-size: 22px; margin-bottom: 6px; }
+        .stat-value { font-size: 22px; font-weight: 900; }
+        .stat-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+        .stat-card.correct .stat-value { color: var(--green); }
+        .stat-card.wrong .stat-value { color: var(--red); }
+        .stat-card.skipped .stat-value { color: var(--orange); }
+
+        .action-btns { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        .action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: 0.22s;
+            font-family: 'Poppins', sans-serif;
+            text-decoration: none;
+            color: #fff;
+        }
+        .action-btn.review-btn { background: linear-gradient(135deg, var(--orange), #e65c00); box-shadow: 0 8px 24px rgba(247,151,30,0.40); }
+        .action-btn.retry-btn { background: linear-gradient(135deg, var(--purple), #7c3aed); box-shadow: 0 8px 24px rgba(168,85,247,0.35); }
+        .action-btn:hover { transform: translateY(-3px) scale(1.02); }
+
+        .review-section { display: none; }
+        .review-section.open { display: block; }
+        .review-title {
+            font-size: 16px; font-weight: 900; color: var(--orange);
+            margin-bottom: 14px; display: flex; align-items: center; gap: 8px;
+        }
+
+        .review-card {
+            background: var(--card);
+            border: 1px solid rgba(255,65,108,0.25);
+            border-radius: 16px;
+            padding: 0 0 14px;
+            margin-bottom: 14px;
+            overflow: hidden;
+        }
+
+        .review-thumb {
+            width: 100%;
+            max-height: 140px;
+            object-fit: contain;
+            background: rgba(0,0,0,0.3);
+            border-radius: 0;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .review-card-body { padding: 0 16px; }
+
+        .review-q { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.55; }
+        .review-row {
+            display: flex; align-items: flex-start; gap: 8px;
+            font-size: 13px; font-weight: 600; margin-bottom: 6px; line-height: 1.45;
+        }
+        .review-tag {
+            font-size: 10px; font-weight: 800;
+            padding: 2px 8px; border-radius: 6px; white-space: nowrap; margin-top: 1px;
+        }
+        .tag-wrong { background: rgba(255,65,108,0.2); color: var(--red); }
+        .tag-correct { background: rgba(0,200,81,0.2); color: var(--green); }
+        .tag-skipped { background: rgba(247,151,30,0.2); color: var(--orange); }
+    </style>
+</head>
+<body>
+
+<!-- ===== QUIZ SCREEN ===== -->
+<div id="quizScreen" class="screen active">
+    <div class="top-bar">
+        <a href="garde5.html" class="back-btn"><i class="fas fa-arrow-left"></i> ආපසු</a>
+        <div class="timer-box" id="timerBox">
+            <i class="fas fa-clock"></i>
+            <span id="timerDisplay">45:00</span>
+        </div>
+        <div class="progress-info">
+            <strong id="answeredCount">0</strong>/20<br>
+            <span>answered</span>
+        </div>
+    </div>
+    <div class="progress-wrap">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="quiz-content" id="quizContent"></div>
+    <div class="submit-bar">
+        <div class="answered-count">
+            <strong id="answeredCountBottom">0</strong> ප්‍රශ්නවලට<br>
+            <span>පිළිතුරු දී ඇත</span>
+        </div>
+        <button class="submit-btn" onclick="submitQuiz()">
+            <i class="fas fa-paper-plane"></i> ඉදිරිපත් කරන්න
+        </button>
+    </div>
+</div>
+
+<!-- ===== RESULT SCREEN ===== -->
+<div id="resultScreen" class="screen">
+    <div class="result-header">
+        <span class="result-emoji" id="resultEmoji">🎉</span>
+        <div class="result-percent" id="resultPercent">0%</div>
+        <div class="result-label" id="resultLabel">ලකුණු</div>
+        <div class="result-grade" id="resultGrade">Grade</div>
+    </div>
+    <div class="stats-row">
+        <div class="stat-card correct"><div class="stat-icon">✅</div><div class="stat-value" id="correctCount">0</div><div class="stat-label">නිවැරදි</div></div>
+        <div class="stat-card wrong"><div class="stat-icon">❌</div><div class="stat-value" id="wrongCount">0</div><div class="stat-label">වැරදි</div></div>
+        <div class="stat-card skipped"><div class="stat-icon">⏭️</div><div class="stat-value" id="skippedCount">0</div><div class="stat-label">skip</div></div>
+    </div>
+    <div class="action-btns">
+        <button class="action-btn review-btn" onclick="toggleReview()">
+            <i class="fas fa-list-ul"></i> <span id="reviewBtnText">වැරදි ප්‍රශ්න සාරාංශය බලන්න</span>
+        </button>
+        <button class="action-btn retry-btn" onclick="retryQuiz()">
+            <i class="fas fa-redo"></i> තවත් පේපරයක් try කරමු!
+        </button>
+    </div>
+    <div class="review-section" id="reviewSection">
+        <div class="review-title"><i class="fas fa-image"></i> වැරදි / Skip කළ ප්‍රශ්න</div>
+        <div id="reviewContent"></div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// රූප සටහන් සහිත ප්‍රශ්න BANK
+// img: "q01.png" → ප්‍රශ්නයේ ඡායාරූප ගොනු නාමය
+//   (q01.png, q02.png, q03.png … විදිහට images/ ෆෝල්ඩරයේ තබන්න)
+// img: null → රූපයක් නොමැති ප්‍රශ්නය
+// format: { q, img, o: ["A","B","C","D"], a: 0 }
+// ============================================================
+const QUESTION_BANK = [
+    {
+        q: "රූපයේ දිස්වන හැඩය කුමක්ද?",
+        img: "images/q01.png",
+        o: ["ත්‍රිකෝණය", "සෘජුකෝණාස්‍රය", "රවුම", "හතරැස්"],
+        a: 0
+    },
+    {
+        q: "රූපයේ ශාකය නිවැරදිව හඳුනාගන්න.",
+        img: "images/q02.png",
+        o: ["පොල් ගස", "කොස් ගස", "නා ගස", "ඇඹිල්ල ගස"],
+        a: 0
+    },
+    {
+        q: "රූපයේ සතා ගොයම් කෑවාද?",
+        img: "images/q03.png",
+        o: ["ඔව්, ශාකභක්ෂකයෙකි", "නැහැ, මාංශ භක්ෂකයෙකි", "දෙකෙහිම ලක්ෂණ ඇත", "ජලජ සතෙකි"],
+        a: 0
+    },
+    {
+        q: "4රූපයේ ආකෘතිය (pattern) ඊළඟ හැඩය කුමක්ද?",
+        img: "images/q04.png",
+        o: ["රවුම", "ත්‍රිකෝණය", "සෘජුකෝණාස්‍රය", "ෂඩ්‍රිකෝණය"],
+        a: 1
+    },
+    {
+        q: "රූපයේ ශ්‍රී ලාංකේය ස්මාරකය කුමක්ද?",
+        img: "images/q05.png",
+        o: ["රුවන්වැලිසාය", "ජේතවනාරාමය", "දළදා මාළිගාව", "ලෝවාමහාපාය"],
+        a: 2
+    },
+    {
+        q: "රූපයේ රේඛා කීයක් ඇත්ද?",
+        img: "images/q06.png",
+        o: ["3", "4", "5", "6"],
+        a: 1
+    },
+    {
+        q: "රූපයේ දිස්වන ක්‍රීඩාව කුමක්ද?",
+        img: "images/q07.png",
+        o: ["ක්‍රිකට්", "රග්බි", "වොලිබෝල්", "පාපන්දු"],
+        a: 0
+    },
+    {
+        q: "රූපයේ කොතැනද ඔරලෝසු ඇඟිල්ල (hour hand) ඇත්තේ?",
+        img: "images/q08.png",
+        o: ["12 ට", "3 ට", "6 ට", "9 ට"],
+        a: 2
+    },
+    {
+        q: "රූපයේ ජ්‍යාමිතික හැඩ (shapes) ගණන කීයද?",
+        img: "images/q09.png",
+        o: ["2", "3", "4", "5"],
+        a: 2
+    },
+    {
+        q: "රූපයේ ජලය ගලා යන දිශාව කුමක්ද?",
+        img: "images/q10.png",
+        o: ["ඉහළ සිට පහළට", "පහළ සිට ඉහළට", "වමේ සිට දකුණට", "දකුණේ සිට වමට"],
+        a: 0
+    },
+    {
+        q: "රූපයේ ශාකය ආහාර නිපදවන ක්‍රියාවලිය?",
+        img: "images/q11.png",
+        o: ["ශ්වසනය", "ප්‍රකාශ සංස්ලේෂණය", "ජලය ශෝෂණය", "වාෂ්ප ශෝෂණය"],
+        a: 1
+    },
+    {
+        q: "රූපයේ ජලයේ හොල්ලෙනා ලෙස ලකුණු (water marks) ගණන?",
+        img: "images/q12.png",
+        o: ["2", "3", "4", "5"],
+        a: 1
+    },
+    {
+        q: "රූපයේ ත්‍රිකෝණයේ (triangle) නිවැරදි ආකාරය?",
+        img: "images/q13.png",
+        o: ["සමද්විබාහු ත්‍රිකෝණය", "සමකෝණ ත්‍රිකෝණය", "විෂමකෝණ ත්‍රිකෝණය", "සම්‍යක් ත්‍රිකෝණය"],
+        a: 0
+    },
+    {
+        q: "රූපයේ ශ්‍රී ලංකා ජාතික ධජයේ නිරූපිත ශ්‍රී ලාංකේය සිහළ සිංහයා?",
+        img: "images/q14.png",
+        o: ["කඩුව ගෙන", "කොඩිය ගෙන", "බෝතලය ගෙන", "ගිතෙල් ගෙන"],
+        a: 0
+    },
+    {
+        q: "රූපයේ ග්‍රාෆ් එකේ ඉහළ ලකුණ (highest point) කුමන ශ්‍රේණිය?",
+        img: "images/q15.png",
+        o: ["2019", "2020", "2021", "2022"],
+        a: 2
+    },
+    {
+        q: "රූපයේ ගිනිකඳු (volcano) ක්‍රියාවලිය:",
+        img: "images/q16.png",
+        o: ["මැග්මා ගලා යයි", "ජලය ගලා යයි", "ගල් ගලා යයි", "වාෂ්ප ගලා යයි"],
+        a: 0
+    },
+    {
+        q: "රූපයේ ගණිත ලකුණ කොතැනද?",
+        img: "images/q17.png",
+        o: ["ගුණ ලකුණ (×)", "ඉතිරිය ලකුණ (÷)", "ගොඩ ලකුණ (+)", "අඩු ලකුණ (-)"],
+        a: 2
+    },
+    {
+        q: "රූපයේ ශ්‍රී ලාංකේය රූකඩ (puppet) නිවැරදිව හඳුනාගන්න.",
+        img: "images/q18.png",
+        o: ["කොළඹ රූකඩ", "නාඩගම රූකඩ", "බෝල රූකඩ", "ජව රූකඩ"],
+        a: 1
+    },
+    {
+        q: "රූපයේ ප්‍රශ්න ලකුණ (?) ස්ථානයේ ඇතිවිය යුතු ගණිතය?",
+        img: "images/q19.png",
+        o: ["16", "18", "20", "24"],
+        a: 2
+    },
+    {
+        q: "රූපයේ සිතියමෙහි (map) ශ්‍රී ලංකාවේ ස්ථානය?",
+        img: "images/q20.png",
+        o: ["උතුරු ගෝලාර්ධය", "දක්ෂිණ ගෝලාර්ධය", "ඇසිය", "ඇෆ්‍රිකාව"],
+        a: 0
+    },
+];
+
+// ============================================================
+const QUESTIONS_PER_PAPER = 20;
+const TIMER_MINUTES = 45;
+
+let currentQuestions = [];
+let userAnswers = {};
+let timerInterval = null;
+let secondsLeft = TIMER_MINUTES * 60;
+let quizSubmitted = false;
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function loadQuiz() {
+    userAnswers = {};
+    quizSubmitted = false;
+    secondsLeft = TIMER_MINUTES * 60;
+    updateTimerDisplay();
+
+    const pool = shuffle(QUESTION_BANK);
+    currentQuestions = pool.slice(0, Math.min(QUESTIONS_PER_PAPER, pool.length));
+
+    // Update total count display
+    document.querySelectorAll('.progress-info strong').forEach(el => {});
+    document.getElementById('answeredCount').nextSibling && null;
+    
+    renderQuestions();
+    startTimer();
+    updateAnsweredCount();
+
+    window.scrollTo(0, 0);
+    document.getElementById('quizScreen').style.display = 'block';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('quizScreen').classList.add('active');
+    document.getElementById('resultScreen').classList.remove('active');
+}
+
+function renderQuestions() {
+    const container = document.getElementById('quizContent');
+    container.innerHTML = '';
+
+    // Update total in header
+    document.querySelector('.progress-info').innerHTML = 
+        `<strong id="answeredCount">0</strong>/${currentQuestions.length}<br><span>answered</span>`;
+
+    currentQuestions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `qcard-${idx}`;
+
+        // Build image section
+        let imageHTML = '';
+        if (q.img) {
+            imageHTML = `
+                <div class="question-image-wrap">
+                    <img 
+                        src="${q.img}" 
+                        alt="ප්‍රශ්නය ${idx + 1} රූපය"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        loading="lazy"
+                    >
+                    <div class="img-placeholder" style="display:none;">
+                        <i class="fas fa-image"></i>
+                        <span>${q.img}</span>
+                    </div>
+                    <div class="img-badge"><i class="fas fa-image"></i> රූප ලැටල</div>
+                </div>
+            `;
+        }
+
+        const letters = ['A', 'B', 'C', 'D'];
+        const optionsHTML = q.o.map((opt, oi) => `
+            <label class="option-label" id="opt-${idx}-${oi}" onclick="selectAnswer(${idx}, ${oi})">
+                <input type="radio" name="q${idx}" value="${oi}">
+                <span class="option-letter">${letters[oi]}</span>
+                <span class="option-text">${opt}</span>
+            </label>
+        `).join('');
+
+        card.innerHTML = `
+            ${imageHTML}
+            <div class="question-body">
+                <div class="q-number"><span class="q-dot"></span>ප්‍රශ්නය ${idx + 1}</div>
+                <div class="question-text">${q.q}</div>
+                <div class="options-grid">${optionsHTML}</div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function selectAnswer(qIdx, optIdx) {
+    if (quizSubmitted) return;
+    for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`opt-${qIdx}-${i}`);
+        if (el) el.classList.remove('selected');
+    }
+    const selected = document.getElementById(`opt-${qIdx}-${optIdx}`);
+    if (selected) selected.classList.add('selected');
+    userAnswers[qIdx] = optIdx;
+    updateAnsweredCount();
+}
+
+function updateAnsweredCount() {
+    const count = Object.keys(userAnswers).length;
+    const acEl = document.getElementById('answeredCount');
+    if (acEl) acEl.textContent = count;
+    document.getElementById('answeredCountBottom').textContent = count;
+    const pct = (count / currentQuestions.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        secondsLeft--;
+        updateTimerDisplay();
+        if (secondsLeft <= 300) {
+            document.getElementById('timerBox').classList.add('warning');
+        }
+        if (secondsLeft <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz(true);
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+    const s = (secondsLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+}
+
+function submitQuiz(timeUp = false) {
+    if (quizSubmitted) return;
+    quizSubmitted = true;
+    clearInterval(timerInterval);
+
+    let correct = 0, wrong = 0, skipped = 0;
+    const wrongItems = [];
+
+    currentQuestions.forEach((q, idx) => {
+        const answered = userAnswers[idx] !== undefined;
+        if (!answered) {
+            skipped++;
+        } else if (userAnswers[idx] === q.a) {
+            correct++;
+        } else {
+            wrong++;
+            wrongItems.push({ idx, q, userAns: userAnswers[idx] });
+        }
+    });
+
+    const totalPct = Math.round((correct / currentQuestions.length) * 100);
+
+    document.getElementById('quizScreen').classList.remove('active');
+    document.getElementById('resultScreen').classList.add('active');
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    let emoji, grade;
+    if (totalPct >= 80) { emoji = '🏆'; grade = 'විශිෂ්ට!'; }
+    else if (totalPct >= 60) { emoji = '🎉'; grade = 'ඉතා හොඳයි!'; }
+    else if (totalPct >= 40) { emoji = '👍'; grade = 'හොඳයි!'; }
+    else { emoji = '📚'; grade = 'තව හොදට උත්සහා කරන්න!'; }
+
+    document.getElementById('resultEmoji').textContent = timeUp ? '⏰' : emoji;
+    document.getElementById('resultPercent').textContent = totalPct + '%';
+    document.getElementById('resultLabel').textContent = `නිවැරදි: ${correct} / ${currentQuestions.length} ප්‍රශ්නවලින්${timeUp ? ' (වේලාව අවසන්!)' : ''}`;
+    document.getElementById('resultGrade').textContent = grade;
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('wrongCount').textContent = wrong;
+    document.getElementById('skippedCount').textContent = skipped;
+
+    // Build review
+    const rev = document.getElementById('reviewContent');
+    rev.innerHTML = '';
+    const letters = ['A', 'B', 'C', 'D'];
+
+    if (wrongItems.length === 0 && skipped === 0) {
+        rev.innerHTML = '<div style="color:#00c851;font-weight:700;text-align:center;padding:16px;">සියලු ප්‍රශ්නවලට නිවැරදිව පිළිතුරු දී ඇත! 🎉</div>';
+    } else {
+        wrongItems.forEach(item => {
+            const d = document.createElement('div');
+            d.className = 'review-card';
+            const thumbHTML = item.q.img
+                ? `<img class="review-thumb" src="${item.q.img}" alt="රූපය" onerror="this.style.display='none'">`
+                : '';
+            d.innerHTML = `
+                ${thumbHTML}
+                <div class="review-card-body">
+                    <div class="review-q">${item.q.q}</div>
+                    <div class="review-row">
+                        <span class="review-tag tag-wrong">ඔබගේ</span>
+                        <span style="color:rgba(255,65,108,0.9)">${letters[item.userAns]}. ${item.q.o[item.userAns]}</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-tag tag-correct">නිවැරදි</span>
+                        <span style="color:#00c851">${letters[item.q.a]}. ${item.q.o[item.q.a]}</span>
+                    </div>
+                </div>
+            `;
+            rev.appendChild(d);
+        });
+
+        currentQuestions.forEach((q, idx) => {
+            if (userAnswers[idx] === undefined) {
+                const d = document.createElement('div');
+                d.className = 'review-card';
+                const thumbHTML = q.img
+                    ? `<img class="review-thumb" src="${q.img}" alt="රූපය" onerror="this.style.display='none'">`
+                    : '';
+                d.innerHTML = `
+                    ${thumbHTML}
+                    <div class="review-card-body">
+                        <div class="review-q">${q.q}</div>
+                        <div class="review-row">
+                            <span class="review-tag tag-skipped">Skip</span>
+                            <span style="color:rgba(247,151,30,0.9)">පිළිතුරු නොදෙනු ලැබීය</span>
+                        </div>
+                        <div class="review-row">
+                            <span class="review-tag tag-correct">නිවැරදි</span>
+                            <span style="color:#00c851">${letters[q.a]}. ${q.o[q.a]}</span>
+                        </div>
+                    </div>
+                `;
+                rev.appendChild(d);
+            }
+        });
+    }
+}
+
+function toggleReview() {
+    const sec = document.getElementById('reviewSection');
+    const btn = document.getElementById('reviewBtnText');
+    if (sec.classList.contains('open')) {
+        sec.classList.remove('open');
+        btn.textContent = 'වැරදි ප්‍රශ්න සාරාංශය බලන්න';
+    } else {
+        sec.classList.add('open');
+        btn.textContent = 'සාරාංශය වසන්න';
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function retryQuiz() {
+    document.getElementById('reviewSection').classList.remove('open');
+    document.getElementById('reviewBtnText').textContent = 'වැරදි ප්‍රශ්න සාරාංශය බලන්න';
+    loadQuiz();
+}
+
+window.onload = loadQuiz;
+</script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ MIND PRO - Grade 5 Quiz</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #06031f;
+            --card: #0d0a2e;
+            --blue: #00a8ff;
+            --red: #ff416c;
+            --green: #00c851;
+            --orange: #f7971e;
+            --purple: #a855f7;
+            --text: #ffffff;
+            --muted: rgba(255,255,255,0.55);
+            --border: rgba(255,255,255,0.10);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', 'Noto Sans Sinhala', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+        body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 15% 20%, rgba(0,168,255,0.10) 0%, transparent 50%), radial-gradient(ellipse at 85% 80%, rgba(255,65,108,0.08) 0%, transparent 50%); pointer-events: none; z-index: 0; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        .top-bar { position: sticky; top: 0; z-index: 100; background: rgba(6,3,31,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+        .back-btn { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 13px; font-weight: 600; text-decoration: none; background: rgba(255,255,255,0.07); border-radius: 8px; padding: 7px 12px; transition: 0.2s; border: none; cursor: pointer; }
+        .back-btn:hover { color: #fff; background: rgba(255,255,255,0.13); }
+        .timer-box { display: flex; align-items: center; gap: 8px; background: linear-gradient(135deg, #ff416c, #ff4b2b); border-radius: 12px; padding: 8px 16px; font-size: 18px; font-weight: 900; letter-spacing: 1px; box-shadow: 0 4px 16px rgba(255,65,108,0.40); }
+        .timer-box.warning { animation: timerPulse 0.8s ease-in-out infinite; }
+        @keyframes timerPulse { 0%, 100% { box-shadow: 0 4px 16px rgba(255,65,108,0.40); } 50% { box-shadow: 0 4px 28px rgba(255,65,108,0.85); } }
+        .progress-info { font-size: 12px; color: var(--muted); font-weight: 600; text-align: right; line-height: 1.3; }
+        .progress-info strong { color: var(--blue); font-size: 14px; }
+        .progress-wrap { height: 4px; background: rgba(255,255,255,0.08); position: sticky; top: 57px; z-index: 99; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--purple)); transition: width 0.4s ease; }
+        .quiz-content { padding: 20px 16px 40px; max-width: 640px; margin: 0 auto; }
+        .question-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 22px 20px 18px; margin-bottom: 14px; position: relative; transition: border-color 0.3s; }
+        .question-card.answered-correct { border-color: rgba(0,200,81,0.5); }
+        .question-card.answered-wrong { border-color: rgba(255,65,108,0.4); }
+        .q-number { font-size: 11px; font-weight: 700; color: var(--blue); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+        .q-number .q-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--blue); }
+        .question-text { font-size: 15px; font-weight: 700; line-height: 1.65; color: #fff; margin-bottom: 16px; }
+        .options-grid { display: flex; flex-direction: column; gap: 9px; }
+        .option-label { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: 13px; background: rgba(255,255,255,0.05); border: 1.5px solid rgba(255,255,255,0.10); cursor: pointer; transition: all 0.2s; position: relative; }
+        .option-label:hover { background: rgba(0,168,255,0.12); border-color: rgba(0,168,255,0.40); }
+        .option-label input[type="radio"] { display: none; }
+        .option-letter { width: 30px; height: 30px; border-radius: 8px; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.15); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: var(--muted); flex-shrink: 0; transition: all 0.2s; }
+        .option-text { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.85); line-height: 1.45; }
+        .option-label.selected { background: rgba(0,168,255,0.18); border-color: var(--blue); }
+        .option-label.selected .option-letter { background: var(--blue); border-color: var(--blue); color: #fff; }
+        .option-label.selected .option-text { color: #fff; }
+        .option-label.show-correct { background: rgba(0,200,81,0.15); border-color: var(--green); }
+        .option-label.show-correct .option-letter { background: var(--green); border-color: var(--green); color: #fff; }
+        .option-label.show-wrong { background: rgba(255,65,108,0.15); border-color: var(--red); }
+        .option-label.show-wrong .option-letter { background: var(--red); border-color: var(--red); color: #fff; }
+        .submit-bar { position: sticky; bottom: 0; background: rgba(6,3,31,0.95); backdrop-filter: blur(12px); border-top: 1px solid var(--border); padding: 16px; display: flex; gap: 10px; align-items: center; }
+        .answered-count { font-size: 12px; color: var(--muted); font-weight: 600; flex: 1; line-height: 1.4; }
+        .answered-count strong { color: var(--orange); }
+        .submit-btn { padding: 14px 28px; background: linear-gradient(135deg, var(--red), #ff4b2b); border: none; border-radius: 14px; color: #fff; font-size: 15px; font-weight: 900; cursor: pointer; box-shadow: 0 6px 20px rgba(255,65,108,0.40); transition: 0.2s; font-family: 'Poppins', sans-serif; }
+        .submit-btn:hover { transform: scale(1.03); box-shadow: 0 8px 28px rgba(255,65,108,0.55); }
+        #resultScreen { padding: 24px 16px 60px; max-width: 640px; margin: 0 auto; }
+        .result-header { background: linear-gradient(135deg, #00a8ff, #0070cc); border-radius: 24px; padding: 30px 24px 24px; text-align: center; margin-bottom: 20px; box-shadow: 0 12px 40px rgba(0,168,255,0.30); position: relative; overflow: hidden; }
+        .result-header::after { content: ''; position: absolute; top: -40px; right: -40px; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,0.07); }
+        .result-emoji { font-size: 52px; display: block; margin-bottom: 10px; }
+        .result-percent { font-size: 58px; font-weight: 900; line-height: 1; color: #fff; text-shadow: 0 4px 16px rgba(0,0,0,0.3); }
+        .result-label { font-size: 14px; color: rgba(255,255,255,0.80); font-weight: 600; margin-top: 6px; }
+        .result-grade { display: inline-block; margin-top: 14px; background: rgba(255,255,255,0.18); border-radius: 20px; padding: 6px 20px; font-size: 16px; font-weight: 900; letter-spacing: 1px; }
+        .stats-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
+        .stat-icon { font-size: 22px; margin-bottom: 6px; }
+        .stat-value { font-size: 22px; font-weight: 900; }
+        .stat-label { font-size: 11px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+        .stat-card.correct .stat-value { color: var(--green); }
+        .stat-card.wrong .stat-value { color: var(--red); }
+        .stat-card.skipped .stat-value { color: var(--orange); }
+        .action-btns { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+        .action-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px; border: none; border-radius: 16px; font-size: 15px; font-weight: 800; cursor: pointer; transition: 0.22s; font-family: 'Poppins', sans-serif; text-decoration: none; color: #fff; }
+        .action-btn.review-btn { background: linear-gradient(135deg, var(--orange), #e65c00); box-shadow: 0 8px 24px rgba(247,151,30,0.40); }
+        .action-btn.retry-btn { background: linear-gradient(135deg, var(--blue), #0055cc); box-shadow: 0 8px 24px rgba(0,168,255,0.35); }
+        .action-btn:hover { transform: translateY(-3px) scale(1.02); }
+        .review-section { display: none; }
+        .review-section.open { display: block; }
+        .review-title { font-size: 16px; font-weight: 900; color: var(--red); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+        .review-card { background: var(--card); border: 1px solid rgba(255,65,108,0.25); border-radius: 16px; padding: 18px 16px; margin-bottom: 12px; }
+        .review-q { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 10px; line-height: 1.55; }
+        .review-row { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; font-weight: 600; margin-bottom: 6px; line-height: 1.45; }
+        .review-tag { font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; white-space: nowrap; margin-top: 1px; }
+        .tag-wrong { background: rgba(255,65,108,0.2); color: var(--red); }
+        .tag-correct { background: rgba(0,200,81,0.2); color: var(--green); }
+        .tag-skipped { background: rgba(247,151,30,0.2); color: var(--orange); }
+    </style>
+</head>
+<body>
+
+<div id="quizScreen" class="screen active">
+    <div class="top-bar">
+        <a href="garde5.html" class="back-btn"><i class="fas fa-arrow-left"></i> ආපසු</a>
+        <div class="timer-box" id="timerBox">
+            <i class="fas fa-clock"></i>
+            <span id="timerDisplay">45:00</span>
+        </div>
+        <div class="progress-info">
+            <strong id="answeredCount">0</strong>/40<br>
+            <span>answered</span>
+        </div>
+    </div>
+    <div class="progress-wrap">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+    </div>
+    <div class="quiz-content" id="quizContent"></div>
+    <div class="submit-bar">
+        <div class="answered-count">
+            <strong id="answeredCountBottom">0</strong> ප්‍රශ්නවලට<br>
+            <span>පිළිතුරු දී ඇත</span>
+        </div>
+        <button class="submit-btn" onclick="submitQuiz()">
+            <i class="fas fa-paper-plane"></i> ඉදිරිපත් කරන්න
+        </button>
+    </div>
+</div>
+
+<div id="resultScreen" class="screen">
+    <div class="result-header">
+        <span class="result-emoji" id="resultEmoji">🎉</span>
+        <div class="result-percent" id="resultPercent">0%</div>
+        <div class="result-label" id="resultLabel">ලකුණු</div>
+        <div class="result-grade" id="resultGrade">Grade</div>
+    </div>
+    <div class="stats-row">
+        <div class="stat-card correct"><div class="stat-icon">✅</div><div class="stat-value" id="correctCount">0</div><div class="stat-label">නිවැරදි</div></div>
+        <div class="stat-card wrong"><div class="stat-icon">❌</div><div class="stat-value" id="wrongCount">0</div><div class="stat-label">වැරදි</div></div>
+        <div class="stat-card skipped"><div class="stat-icon">⏭️</div><div class="stat-value" id="skippedCount">0</div><div class="stat-label">skip</div></div>
+    </div>
+    <div class="action-btns">
+        <button class="action-btn review-btn" onclick="toggleReview()">
+            <i class="fas fa-list-ul"></i> <span id="reviewBtnText">වැරදි ප්‍රශ්න සාරාංශය බලන්න</span>
+        </button>
+        <button class="action-btn retry-btn" onclick="retryQuiz()">
+            <i class="fas fa-redo"></i> තවත් පේපරයක් try කරමු!
+        </button>
+    </div>
+    <div class="review-section" id="reviewSection">
+        <div class="review-title"><i class="fas fa-exclamation-triangle"></i> වැරදි / Skip කළ ප්‍රශ්න</div>
+        <div id="reviewContent"></div>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// QUESTION BANK
+// ✅ ප්‍රශ්නය ඉදිරිපිට අංකය (1. 2. 3.) දමන්න එපා!
+// renderQuestions() ස්වයංක්‍රීයව 1-40 දායි
+// format: { q: "ප්‍රශ්නය", o: ["A","B","C","D"], a: 0 }
+// ============================================================
+const QUESTION_BANK = [
+    // ===== සිංහල =====
+    { q: "'ආකාශය' යන වචනයේ අර්ථය කුමක්ද?", o: ["ගොඩ", "අහස", "මුහුද", "ගිනිකඳ"], a: 1 },
+    { q: "'රත්නපුර' නගරය ප්‍රසිද්ධ වන්නේ කිනම් දෙය සඳහාද?", o: ["රත්නගල් සඳහා", "සතුන් සඳහා", "ධීවර කර්මාන්තය සඳහා", "කඩදාසි සඳහා"], a: 0 },
+    { q: "'ගස' යන නාම පදයේ බහුවචනය කුමක්ද?", o: ["ගස්", "ගස්සා", "ගසාල", "ගනස්"], a: 0 },
+    { q: "'ඉඟිති' යන්නෙහි අර්ථය කුමක්ද?", o: ["ලොකු", "කුඩා", "උස", "දිගු"], a: 1 },
+    { q: "'මිනිසා' යන වචනයේ ස්ත්‍රීලිංග රූපය කුමක්ද?", o: ["ගැහැනිය", "ළමයා", "කාන්තාව", "දරුවා"], a: 0 },
+    { q: "සිංහල හෝඩියේ ස්වරාක්ෂර ගණන කීයද?", o: ["18", "16", "20", "14"], a: 0 },
+    { q: "'ක්‍රිකට්' ක්‍රීඩාව ශ්‍රී ලංකාවට හඳුන්වා දුන්නේ කවුරුන්ද?", o: ["ඉංග්‍රීසීන්", "ඉන්දියාව", "ඕස්ට්‍රේලියාව", "පකිස්ථානය"], a: 0 },
+    { q: "'පොල් ගස' ශ්‍රී ලංකාවේ ජාතික ශාකය ලෙස හැඳින්වෙන්නේ ඇයි?", o: ["ආර්ථික වැදගත්කම නිසා", "ලස්සන නිසා", "ජල ශාකයක් නිසා", "කිසිදු හේතුවක් නැත"], a: 0 },
+    { q: "'සිංහල නව වසර' සමරනු ලබන්නේ කුමන මාසයේද?", o: ["මාර්තු", "අප්‍රේල්", "ජනවාරි", "දෙසැම්බර්"], a: 1 },
+    { q: "'ශ්‍රී ලංකාවේ ජාතික ගෙඩිය' ලෙස හඳුන්වන ශාකය කුමක්ද?", o: ["ඇඹුල්", "දෙල්", "නා", "කොස්"], a: 3 },
+
+    // ===== ගණිතය =====
+    { q: "325 + 478 = ?", o: ["793", "803", "813", "800"], a: 1 },
+    { q: "1000 - 367 = ?", o: ["633", "643", "623", "663"], a: 0 },
+    { q: "24 × 15 = ?", o: ["360", "350", "370", "380"], a: 0 },
+    { q: "144 ÷ 12 = ?", o: ["10", "11", "12", "13"], a: 2 },
+    { q: "3/4 + 1/4 = ?", o: ["1/2", "3/4", "1", "2"], a: 2 },
+    { q: "0.5 + 0.75 = ?", o: ["1.00", "1.25", "1.50", "0.125"], a: 1 },
+    { q: "25% of 200 = ?", o: ["25", "50", "75", "100"], a: 1 },
+    { q: "සෘජුකෝණාස්‍රයක වර්ගඵලය = දිග × ?", o: ["උස", "ලොකු", "පළල", "ගැඹුර"], a: 2 },
+    { q: "2³ = ?", o: ["6", "8", "9", "12"], a: 1 },
+    { q: "5 × 0 = ?", o: ["5", "0", "50", "1"], a: 1 },
+    { q: "√64 = ?", o: ["6", "7", "8", "9"], a: 2 },
+    { q: "1 කිලෝමීටරය = කී මීටරද?", o: ["100", "500", "1000", "10000"], a: 2 },
+    { q: "ත්‍රිකෝණයක කෝණ 3ක එකතුව = ?°", o: ["90", "180", "270", "360"], a: 1 },
+    { q: "7/10 දශමලය ලෙස ලිවිය හැකි ආකාරය?", o: ["0.07", "0.7", "7.0", "70"], a: 1 },
+    { q: "12 × 12 = ?", o: ["132", "142", "144", "124"], a: 2 },
+
+    // ===== සාමාන්‍ය දැනීම =====
+    { q: "ශ්‍රී ලංකාවේ අගනුවර කුමක්ද?", o: ["ගාල්ල", "කළුතර", "ශ්‍රී ජයවර්ධනපුර කෝට්ටේ", "කොළඹ"], a: 2 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික ක්‍රීඩාව කුමක්ද?", o: ["ක්‍රිකට්", "රග්බි", "වොලිබෝල්", "පාපන්දු"], a: 0 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික කුසුම් ශාකය කුමක්ද?", o: ["නෙළුම", "රෝස", "ලිය", "ජුයි"], a: 0 },
+    { q: "ජලයේ රසායනික සූත්‍රය කුමක්ද?", o: ["CO2", "O2", "H2O", "NaCl"], a: 2 },
+    { q: "සූර්යයා ග්‍රහලෝකයක්ද?", o: ["ඔව්, ග්‍රහලෝකයකි", "නැහැ, තාරකාවකි", "නැහැ, චන්ද්‍රිකාවකි", "නැහැ, ධූමකේතුවකි"], a: 1 },
+    { q: "0 න් බෙදීම ගණිතයේ ප්‍රතිඵලය?", o: ["0 ලැබේ", "1 ලැබේ", "අනන්‍ය", "ශේෂය 0"], a: 2 },
+    { q: "පෘථිවිය වටා සඳ කැරකෙන කාලය?", o: ["24 පැය", "7 දින", "28 දින", "365 දින"], a: 2 },
+    { q: "ශ්‍රී ලංකාව ඉංග්‍රීසීන්ගෙන් නිදහස ලැබූ වර්ෂය?", o: ["1945", "1947", "1948", "1950"], a: 2 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික ගීය රචනා කළේ කවුද?", o: ["ආනන්ද සමරකෝන්", "රවීන්ද්‍ර නාත් තාගෝර්", "රතිලාල් හිනිදුම", "ඩොන් ඇලෙක්සිස්"], a: 0 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික සතා කුමක්ද?", o: ["ලේනා", "හාවා", "ශ්‍රී ලංකා සිංහයා", "අලිය"], a: 2 },
+    { q: "ශ්‍රී ලංකාවේ දිගම ගංගාව?", o: ["කළු ගඟ", "මහවැලි ගඟ", "කෙලණිය ගඟ", "ගිං ගඟ"], a: 1 },
+    { q: "ශ්‍රී ලංකාව සිතියමේ ආකෘතිය?", o: ["ත්‍රිකෝණාකාර", "කඳිරයක් සේ", "රවුමක් සේ", "හතරැස් සේ"], a: 1 },
+    { q: "'දළදා මාළිගාව' ඇත්තේ කොතැනද?", o: ["ගාල්ල", "ඇනුරාධාපුරය", "කන්ද උඩරට", "ත්‍රිකුණාමළය"], a: 2 },
+    { q: "ශ්‍රී ලංකාවේ ජනාධිපති ධූරයට පත්වූ පළමු ජනාධිපති?", o: ["ජේ. ආර්. ජයවර්ධන", "රණසිංහ ප්‍රේමදාස", "ඩඩ්ලි සේනානායක", "ඩී. එස් සේනානායක"], a: 0 },
+    { q: "ශ්‍රී ලංකාවේ ජනගහනය (ආසන්නව)?", o: ["15 මිලියන", "18 මිලියන", "22 මිලියන", "30 මිලියන"], a: 2 },
+    { q: "කොළඹ වරාය කිනම් සාගරයට මුහුණලාද?", o: ["ඉන්දියාන සාගරය", "ශාන්ත සාගරය", "ඇට්ලාන්ටික් සාගරය", "ආර්කිටික් සාගරය"], a: 0 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික ගස?", o: ["නා", "කොස", "ඇඹිල්ල", "දෙල්"], a: 0 },
+    { q: "'Adam's Peak' ශ්‍රී ලංකාවේ නාමය?", o: ["ශ්‍රී පාද", "කිරිගල", "නා-ගිරිය", "ලිහිනිගල"], a: 0 },
+    { q: "ශ්‍රී ලංකාවේ 'රජරට' ප්‍රදේශයේ ප්‍රධාන නගරය?", o: ["ගාල්ල", "ඇනුරාධාපුරය", "ත්‍රිකුණාමළය", "නුවරඑළිය"], a: 1 },
+
+    // ===== ගණිතය 2 =====
+    { q: "500 - 275 = ?", o: ["225", "235", "215", "245"], a: 0 },
+    { q: "18 × 4 = ?", o: ["68", "72", "76", "80"], a: 1 },
+    { q: "5/8 + 3/8 = ?", o: ["8/16", "1", "2/8", "8/8"], a: 1 },
+    { q: "1/2 × 4 = ?", o: ["1", "2", "3", "4"], a: 1 },
+    { q: "99 × 9 = ?", o: ["881", "891", "901", "911"], a: 1 },
+    { q: "සාමාන්‍ය ශ්‍රේණිය සොයා ගන්න: 4, 8, 12, 16, ?", o: ["18", "20", "22", "24"], a: 1 },
+    { q: "ලීටර් 3 = මිලිලීටර් ?", o: ["300", "3000", "30", "3"], a: 1 },
+    { q: "4² + 3² = ?", o: ["24", "25", "49", "14"], a: 1 },
+    { q: "3/5 දශමලය ලෙස?", o: ["0.35", "0.53", "0.6", "0.065"], a: 2 },
+    { q: "1 kg = ? g", o: ["10", "100", "1000", "10000"], a: 2 },
+
+    // ===== විද්‍යාව =====
+    { q: "ශාකවල ආහාර නිපදවන ක්‍රියාවලිය?", o: ["ශ්වසනය", "ප්‍රකාශ සංස්ලේෂණය", "ජලය ශෝෂණය", "හුස්ම ගැනීම"], a: 1 },
+    { q: "චුම්භක ශේෂ ධ්‍රැව දෙකම ළං කළොත්?", o: ["ආකර්ෂණය", "විකර්ෂණය", "ධ්‍රැව නොතිබේ", "දෙකම ආකර්ෂණය"], a: 1 },
+    { q: "ශ්වසන ඉන්ද්‍රිය කුමක්ද?", o: ["හෘදය", "ඔළමිඩිය", "පෙනහළු", "කලේජිය"], a: 2 },
+    { q: "ජලය කිනම් ද්‍රව්‍ය 2කින් සෑදී ඇතිද?", o: ["කාබන් හා ඔක්සිජන්", "හයිඩ්‍රජන් හා ඔක්සිජන්", "නයිට්‍රජන් හා ඔක්සිජන්", "හයිඩ්‍රජන් හා ක්ලෝරීන්"], a: 1 },
+    { q: "රතු, නිල්, කහ - ප්‍රාථමික වර්ණද?", o: ["ඔව්", "නැහැ, රතු, කහ, කොළ", "නැහැ, රතු, නිල්, කොළ", "නැහැ"], a: 0 },
+
+    // ===== අමතර ප්‍රශ්න (100 දක්වා) =====
+    { q: "මිනිස් සිරුරේ ඇටකටු ගණන?", o: ["196", "206", "216", "186"], a: 1 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික කුරුල්ලා?", o: ["සෙනෙහස", "ජුනිපල්", "ශ්‍රී ලංකා කජු කුරුල්ලා", "කොහා"], a: 2 },
+    { q: "1 ලීටරය = කී මිලිලීටරද?", o: ["10", "100", "1000", "10000"], a: 2 },
+    { q: "ශ්‍රී ලංකාවේ ගරු ජනාධිපතිවරයා ජීවත්වන නිළ නිවස?", o: ["ටෙම්පල් ට්‍රීස්", "ජනාධිපති මැදුර", "ශ්‍රී කෝට්ටේ", "ගාල්ල ෆේස්"], a: 1 },
+    { q: "1 වර්ගකිලෝමීටරය = ?", o: ["100 m²", "1000 m²", "1,000,000 m²", "10,000 m²"], a: 2 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික දිනය?", o: ["මාර්තු 4", "පෙබරවාරි 4", "ජනවාරි 4", "අප්‍රේල් 4"], a: 1 },
+    { q: "සූර්ය ග්‍රහ මණ්ඩලයේ ග්‍රහලෝක ගණන?", o: ["7", "8", "9", "10"], a: 1 },
+    { q: "පෘථිවිය සූර්යයා වටා කැරකෙන කාලය?", o: ["24 පැය", "28 දින", "365 දින", "12 මාස"], a: 2 },
+    { q: "මීටර් 100 = ?", o: ["1 km", "0.1 km", "0.01 km", "10 km"], a: 1 },
+    { q: "30 × 30 = ?", o: ["600", "900", "300", "1200"], a: 1 },
+    { q: "ශ්‍රී ලංකාවේ ජලය ගලා නොබසින ලොකුම ජලාශය?", o: ["කළාවැව", "පරාක්‍රම සමුද්‍රය", "කනතලාව", "ජකීල"], a: 1 },
+    { q: "1/4 + 1/4 + 1/4 = ?", o: ["1/4", "1/2", "3/4", "1"], a: 2 },
+    { q: "රවුමක අරය 5 cm නම් විෂ්කම්භය?", o: ["5 cm", "10 cm", "15 cm", "20 cm"], a: 1 },
+    { q: "ශ්‍රී ලංකාවේ ලොකුම ශ්‍රේෂ්ඨාධිකරණය?", o: ["මහාධිකරණය", "ශ්‍රේෂ්ඨාධිකරණය", "ගාල්ල ශ්‍රේෂ්ඨාධිකරණය", "යාපනය ශ්‍රේෂ්ඨාධිකරණය"], a: 1 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික ක්‍රීඩා ස්ථානය?", o: ["සුගතදාස ක්‍රීඩාංගණය", "R. ප්‍රේමදාස ක්‍රීඩාංගණය", "ගාල්ල ක්‍රීඩාංගණය", "අරාලිය ක්‍රීඩාංගණය"], a: 1 },
+];
+
+// ============================================================
+const QUESTIONS_PER_PAPER = 40;
+const TIMER_MINUTES = 30;
+
+let currentQuestions = [];
+let userAnswers = {};
+let timerInterval = null;
+let secondsLeft = TIMER_MINUTES * 60;
+let quizSubmitted = false;
+
+function shuffle(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function loadQuiz() {
+    userAnswers = {};
+    quizSubmitted = false;
+    secondsLeft = TIMER_MINUTES * 60;
+    updateTimerDisplay();
+    document.getElementById('timerBox').classList.remove('warning');
+
+    const pool = shuffle(QUESTION_BANK);
+    currentQuestions = pool.slice(0, Math.min(QUESTIONS_PER_PAPER, pool.length));
+
+    renderQuestions();
+    startTimer();
+    updateAnsweredCount();
+
+    window.scrollTo(0, 0);
+    document.getElementById('quizScreen').style.display = 'block';
+    document.getElementById('resultScreen').style.display = 'none';
+    document.getElementById('quizScreen').classList.add('active');
+    document.getElementById('resultScreen').classList.remove('active');
+}
+
+function renderQuestions() {
+    const container = document.getElementById('quizContent');
+    container.innerHTML = '';
+
+    currentQuestions.forEach((q, idx) => {
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `qcard-${idx}`;
+
+        const letters = ['A', 'B', 'C', 'D'];
+        const optionsHTML = q.o.map((opt, oi) => `
+            <label class="option-label" id="opt-${idx}-${oi}" onclick="selectAnswer(${idx}, ${oi})">
+                <input type="radio" name="q${idx}" value="${oi}">
+                <span class="option-letter">${letters[oi]}</span>
+                <span class="option-text">${opt}</span>
+            </label>
+        `).join('');
+
+        // ✅ KEY FIX: අංකය q-number div එකේ දාල, question text එකේ දමන්නේ නෑ
+        card.innerHTML = `
+            <div class="q-number"><span class="q-dot"></span>ප්‍රශ්නය ${idx + 1} / ${currentQuestions.length}</div>
+            <div class="question-text">${q.q}</div>
+            <div class="options-grid">${optionsHTML}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function selectAnswer(qIdx, optIdx) {
+    if (quizSubmitted) return;
+    for (let i = 0; i < 4; i++) {
+        const el = document.getElementById(`opt-${qIdx}-${i}`);
+        if (el) el.classList.remove('selected');
+    }
+    const selected = document.getElementById(`opt-${qIdx}-${optIdx}`);
+    if (selected) selected.classList.add('selected');
+    userAnswers[qIdx] = optIdx;
+    updateAnsweredCount();
+}
+
+function updateAnsweredCount() {
+    const count = Object.keys(userAnswers).length;
+    document.getElementById('answeredCount').textContent = count;
+    document.getElementById('answeredCountBottom').textContent = count;
+    const pct = (count / currentQuestions.length) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        secondsLeft--;
+        updateTimerDisplay();
+        if (secondsLeft <= 300) {
+            document.getElementById('timerBox').classList.add('warning');
+        }
+        if (secondsLeft <= 0) {
+            clearInterval(timerInterval);
+            submitQuiz(true);
+        }
+    }, 1000);
+}
+
+function updateTimerDisplay() {
+    const m = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+    const s = (secondsLeft % 60).toString().padStart(2, '0');
+    document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+}
+
+function submitQuiz(timeUp = false) {
+    if (quizSubmitted) return;
+    quizSubmitted = true;
+    clearInterval(timerInterval);
+
+    let correct = 0, wrong = 0, skipped = 0;
+    const wrongItems = [];
+
+    currentQuestions.forEach((q, idx) => {
+        const answered = userAnswers[idx] !== undefined;
+        if (!answered) {
+            skipped++;
+        } else if (userAnswers[idx] === q.a) {
+            correct++;
+        } else {
+            wrong++;
+            wrongItems.push({ idx, q, userAns: userAnswers[idx] });
+        }
+    });
+
+    const totalPct = Math.round((correct / currentQuestions.length) * 100);
+
+    document.getElementById('quizScreen').classList.remove('active');
+    document.getElementById('resultScreen').classList.add('active');
+    document.getElementById('quizScreen').style.display = 'none';
+    document.getElementById('resultScreen').style.display = 'block';
+    window.scrollTo(0, 0);
+
+    let emoji, grade;
+    if (totalPct >= 80) { emoji = '🏆'; grade = 'විශිෂ්ට!'; }
+    else if (totalPct >= 60) { emoji = '🎉'; grade = 'ඉතා හොඳයි!'; }
+    else if (totalPct >= 40) { emoji = '👍'; grade = 'හොඳයි!'; }
+    else { emoji = '📚'; grade = 'තව හොදට උත්සහා කරන්න!'; }
+
+    document.getElementById('resultEmoji').textContent = timeUp ? '⏰' : emoji;
+    document.getElementById('resultPercent').textContent = totalPct + '%';
+    document.getElementById('resultLabel').textContent = `නිවැරදි: ${correct} / ${currentQuestions.length} ප්‍රශ්නවලින්${timeUp ? ' (වේලාව අවසන්!)' : ''}`;
+    document.getElementById('resultGrade').textContent = grade;
+    document.getElementById('correctCount').textContent = correct;
+    document.getElementById('wrongCount').textContent = wrong;
+    document.getElementById('skippedCount').textContent = skipped;
+
+    const rev = document.getElementById('reviewContent');
+    rev.innerHTML = '';
+    if (wrongItems.length === 0 && skipped === 0) {
+        rev.innerHTML = '<div style="color:#00c851;font-weight:700;text-align:center;padding:16px;">සියලු ප්‍රශ්නවලට නිවැරදිව පිළිතුරු දී ඇත! 🎉</div>';
+    } else {
+        const letters = ['A', 'B', 'C', 'D'];
+        wrongItems.forEach(item => {
+            const d = document.createElement('div');
+            d.className = 'review-card';
+            // review card හිදී paper number (idx+1) දාමු
+            d.innerHTML = `
+                <div class="review-q"><span style="color:var(--blue);font-size:11px;font-weight:700;">ප්‍රශ්නය ${item.idx + 1}</span><br>${item.q.q}</div>
+                <div class="review-row">
+                    <span class="review-tag tag-wrong">ඔබගේ</span>
+                    <span style="color:rgba(255,65,108,0.9)">${letters[item.userAns]}. ${item.q.o[item.userAns]}</span>
+                </div>
+                <div class="review-row">
+                    <span class="review-tag tag-correct">නිවැරදි</span>
+                    <span style="color:#00c851">${letters[item.q.a]}. ${item.q.o[item.q.a]}</span>
+                </div>
+            `;
+            rev.appendChild(d);
+        });
+
+        currentQuestions.forEach((q, idx) => {
+            if (userAnswers[idx] === undefined) {
+                const d = document.createElement('div');
+                d.className = 'review-card';
+                d.innerHTML = `
+                    <div class="review-q"><span style="color:var(--blue);font-size:11px;font-weight:700;">ප්‍රශ්නය ${idx + 1}</span><br>${q.q}</div>
+                    <div class="review-row">
+                        <span class="review-tag tag-skipped">Skip</span>
+                        <span style="color:rgba(247,151,30,0.9)">පිළිතුරු නොදෙනු ලැබීය</span>
+                    </div>
+                    <div class="review-row">
+                        <span class="review-tag tag-correct">නිවැරදි</span>
+                        <span style="color:#00c851">${letters[q.a]}. ${q.o[q.a]}</span>
+                    </div>
+                `;
+                rev.appendChild(d);
+            }
+        });
+    }
+}
+
+function toggleReview() {
+    const sec = document.getElementById('reviewSection');
+    const btn = document.getElementById('reviewBtnText');
+    if (sec.classList.contains('open')) {
+        sec.classList.remove('open');
+        btn.textContent = 'වැරදි ප්‍රශ්න සාරාංශය බලන්න';
+    } else {
+        sec.classList.add('open');
+        btn.textContent = 'සාරාංශය වසන්න';
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+}
+
+function retryQuiz() {
+    document.getElementById('reviewSection').classList.remove('open');
+    document.getElementById('reviewBtnText').textContent = 'වැරදි ප්‍රශ්න සාරාංශය බලන්න';
+    loadQuiz();
+}
+
+window.onload = loadQuiz;
+</script>
+</body>
+</html>
