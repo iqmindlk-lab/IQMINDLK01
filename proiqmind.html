@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQ MIND - PRO Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { 
+            font-family: 'Poppins', Arial, sans-serif; 
+            display: flex; justify-content: center; align-items: center; 
+            min-height: 100vh; background-color: #06031f; color: white; margin: 0; padding: 20px;
+        }
+        .container { 
+            text-align: center; background: #00a8ff; padding: 30px; 
+            border-radius: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
+            width: 100%; max-width: 380px;
+        }
+        /* ===== PROMO BANNER ===== */
+        .promo-banner {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border-radius: 18px;
+            padding: 16px 14px;
+            margin-bottom: 18px;
+            text-align: justify;
+            box-shadow: 0 6px 20px rgba(255,65,108,0.45);
+        }
+        .promo-brand {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #fff;
+            text-align: center;
+            display: block;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .promo-body {
+            font-size: 13.5px;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+        .promo-price {
+            display: block;
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            background: rgba(0,0,0,0.18);
+            border-radius: 10px;
+            padding: 8px 0;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+        input { 
+            width: 100%; padding: 15px; margin: 15px 0; border: 2px solid #ffffff; 
+            border-radius: 12px; background: #ffffff; color: #333; font-size: 16px; 
+            text-align: center; box-sizing: border-box; font-weight: bold;
+        }
+        .submit-btn { 
+            width: 100%; padding: 15px; background: linear-gradient(45deg, #ff416c, #ff4b2b); 
+            color: white; border: none; border-radius: 12px; font-size: 16px; 
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+        }
+        /* සමාජ මාධ්‍ය බොත්තම් */
+        .social-btn {
+            display: flex; align-items: center; justify-content: center;
+            width: 100%; padding: 12px; margin-top: 10px;
+            border-radius: 12px; font-weight: bold; text-decoration: none;
+            color: white; font-size: 14px; transition: 0.3s; box-sizing: border-box;
+        }
+        .social-btn i { margin-right: 10px; font-size: 18px; }
+        .wa-btn { background: #25d366; }
+        .tg-btn { background: #0088cc; }
+        .fb-btn { background: #1877f2; }
+        .social-btn:hover { opacity: 0.9; transform: scale(1.02); }
+        
+        .error { 
+            color: #fff; font-size: 14px; margin-top: 15px; font-weight: bold; 
+            background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px; display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="promo-banner">
+        <span class="promo-brand">👑 IQ MIND PRO</span>
+        <div class="promo-body">
+            IQ MIND PRO සමග සම්බන්ද විමෙන් (සිංහල ගණිතය සාමාන්‍ය දැනිම රුප සටහන් ගැටලු) 500කට වැඩි ප්‍රමාණයකට සහභාගි විය හැකි අතර අනුමාන ප්‍රශ්න පත්‍ර, පසුගිය විබාග ප්‍රශන පත්‍ර ඉතා පැහැදිලිව සැකසු PDF ඔබට ඩවුන්ලෝඩ් කරගත හැක.
+        </div>
+        <span class="promo-price">📅 මාස හයක් සදහා ගාස්තුව රු.600ක් පමණයි</span>
+    </div>
+
+    <input type="text" id="userId" placeholder="PRO-XXXX" autocomplete="off">
+    <button class="submit-btn" onclick="checkAccess()">ENTER SITE</button>
+    
+    <a href="https://wa.me/94785071666" class="social-btn wa-btn"><i class="fab fa-whatsapp"></i> WhatsApp හරහා රෙජිස්ටර් වෙන්න </a>
+    <a href="https://t.me/sandaruwancomputers" class="social-btn tg-btn"><i class="fab fa-telegram"></i> Telegram හරහා රෙජිස්ටර් වෙන්න </a>
+    <a href="https://web.facebook.com/iqmind.lk" class="social-btn fb-btn"><i class="fab fa-facebook"></i> Facebook හරහා රෙජිස්ටර් වෙන්න </a>
+    
+    <p class="error" id="errorMsg"></p>
+</div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBHgRwGTk_YF11byElDa5dH_GkODzuE2JY",
+    authDomain: "iq-pro-8661d.firebaseapp.com",
+    projectId: "iq-pro-8661d",
+    storageBucket: "iq-pro-8661d.firebasestorage.app",
+    messagingSenderId: "825067863061",
+    appId: "1:825067863061:web:9100baf84c85e2984e221c",
+    measurementId: "G-HSL89D29GR"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.checkAccess = async function() {
+      const typedId = document.getElementById("userId").value.trim();
+      const errorField = document.getElementById("errorMsg");
+      
+      errorField.style.display = "none";
+      if(typedId === "") {
+          errorField.innerText = "කරුණාකර ID එක ඇතුළත් කරන්න!";
+          errorField.style.display = "block";
+          return;
+      }
+
+      try {
+          const docRef = doc(db, "allowed_users", typedId);
+          const docSnap = await getDoc(docRef);
+
+          if (docSnap.exists()) {
+              window.location.href = "pro-questions.html"; 
+          } else {
+              errorField.innerText = "වැරදි User ID එකක්! කරුණාකර අපව සම්බන්ධ කරගන්න.";
+              errorField.style.display = "block";
+          }
+      } catch (error) {
+          errorField.innerText = "සම්බන්ධතා දෝෂයකි. නැවත උත්සාහ කරන්න!";
+          errorField.style.display = "block";
+      }
+  }
+</script>
+
+</body>
+</html>

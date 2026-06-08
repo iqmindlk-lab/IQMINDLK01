@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-JBMB0SY8T6"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-JBMB0SY8T6');
+    </script>
+
+    <title>IQ MIND - GK Quiz</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #06031f; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding: 20px; }
+        .container { background-color: #00a8ff; width: 100%; max-width: 400px; border-radius: 30px; padding: 25px; text-align: center; color: white; box-shadow: 0 15px 35px rgba(0,0,0,0.4); position: relative; }
+        .header { display: flex; align-items: center; margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 15px; }
+        .logo-small { width: 60px; height: 60px; border-radius: 50%; background: white; margin-right: 15px; border: 2px solid white; object-fit: cover; cursor: pointer; }
+        .header-text { text-align: left; }
+        .header-text strong { font-size: 22px; display: block; }
+        .header-text small { font-size: 14px; opacity: 0.9; }
+
+        /* ===== PROMO BANNER ===== */
+        .promo-banner {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+            border-radius: 18px;
+            padding: 16px 14px;
+            margin-bottom: 18px;
+            text-align: left;
+            box-shadow: 0 6px 20px rgba(255,65,108,0.45);
+        }
+        .promo-brand {
+            font-size: 22px;
+            font-weight: 900;
+            letter-spacing: 1px;
+            color: #fff;
+            text-align: center;
+            display: block;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .promo-body {
+            font-size: 13.5px;
+            color: rgba(255,255,255,0.95);
+            line-height: 1.65;
+            margin-bottom: 12px;
+        }
+        .promo-price {
+            display: block;
+            font-size: 18px;
+            font-weight: 900;
+            color: #fff;
+            text-align: center;
+            background: rgba(0,0,0,0.18);
+            border-radius: 10px;
+            padding: 8px 0;
+            margin-top: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== QUIZ BORDER BOX ===== */
+        .quiz-border-box {
+            border: 3px solid #000;
+            border-radius: 22px;
+            padding: 18px 14px 14px;
+            margin-bottom: 18px;
+            background: rgba(0,0,0,0.08);
+        }
+
+        /* ===== SOCIAL BUTTONS ===== */
+        .social-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            padding: 13px 16px;
+            border: none;
+            border-radius: 13px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.22);
+            transition: transform 0.15s, box-shadow 0.15s;
+            box-sizing: border-box;
+        }
+        .social-btn:hover { transform: translateY(-2px); box-shadow: 0 7px 18px rgba(0,0,0,0.3); }
+        .social-btn svg { flex-shrink: 0; }
+        .btn-whatsapp { background: #25D366; }
+        .btn-telegram { background: #2CA5E0; }
+        .btn-facebook { background: #1877F2; }
+
+        /* ===== TIMER ===== */
+        .timer-box { font-size: 20px; font-weight: bold; background-color: #e74c3c; color: white; padding: 6px 15px; border-radius: 20px; display: inline-block; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+
+        .q-count { font-size: 18px; margin-bottom: 10px; font-weight: 500; }
+        .question { font-size: 19px; font-weight: bold; margin-bottom: 25px; line-height: 1.5; min-height: 70px; text-align: left; }
+        .option { background: white; color: #333; padding: 15px; margin: 10px 0; border-radius: 15px; cursor: pointer; font-weight: bold; transition: 0.2s; border: none; width: 100%; font-size: 16px; text-align: left; padding-left: 25px; }
+        .correct { background-color: #2ecc71 !important; color: white; }
+        .wrong { background-color: #e74c3c !important; color: white; }
+        .next-btn { background: #1877F2; color: white; padding: 16px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 17px; display: none; }
+        .result-box { text-align: left; background: white; color: #333; padding: 20px; border-radius: 20px; margin-top: 20px; max-height: 250px; overflow-y: auto; }
+        .summary-item { margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; font-size: 14px; }
+        .home-btn { background: white; color: #333; padding: 15px; width: 100%; border: 1px solid #ddd; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; }
+        .retry-btn { background: #2ecc71; color: white; padding: 15px; width: 100%; border: none; border-radius: 15px; margin-top: 15px; cursor: pointer; font-weight: bold; font-size: 16px; }
+        .follow-btn { display: inline-block; padding: 12px 24px; background-color: #1877F2; color: white; text-decoration: none; border-radius: 50px; font-weight: bold; margin-top: 20px; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); width: 80%; }
+        .follow-btn:hover { background-color: #145dbf; transform: scale(1.05); color: white; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="logo.png" class="logo-small" onclick="goHome()" alt="Logo">
+        <div class="header-text">
+            <strong>IQ MIND</strong>
+            <small>Intelligence Quotient Quiz</small>
+        </div>
+    </div>
+
+    <!-- PROMO BANNER -->
+    <div class="promo-banner">
+        <span class="promo-brand">👑 IQ MIND PRO</span>
+        <div class="promo-body">
+            IQ MIND PRO සමග සම්බන්ද විමෙන් (සිංහල ගණිතය සාමාන්‍ය දැනිම රුප සටහන් ගැටලු) 500කට වැඩි ප්‍රමාණයකට සහභාගි විය හැකි අතර අනුමාන ප්‍රශ්න පත්‍ර, පසුගිය විබාග ප්‍රශන පත්‍ර ඉතා පැහැදිලිව සැකසු PDF ඔබට ඩවුන්ලෝඩ් කරගත හැක.
+        </div>
+        <span class="promo-price">📅 මාස හයක් සදහා ගාස්තුව රු.600ක් පමණයි</span>
+    </div>
+
+    <!-- QUIZ AREA inside black border box -->
+    <div class="quiz-border-box">
+        <div id="quiz-area">
+            <div class="timer-box">⏱️ තත්පර: <span id="time-left">30</span></div>
+
+            <div class="q-count">Question <span id="current-q-num">1</span> of 10</div>
+            <div class="question" id="question-text"></div>
+            <div id="options-list"></div>
+            <button id="next-btn" class="next-btn" onclick="handleNext()">NEXT QUESTION</button>
+        </div>
+
+        <div id="result-area" class="hidden">
+            <h2>Quiz Completed!</h2>
+            <h3 id="final-score"></h3>
+            <div class="result-box" id="summary-content"></div>
+            <button class="retry-btn" onclick="restartQuiz()">තවත් ගැටලු 10ක් උත්සහ කරන්න</button>
+            <a href="https://web.facebook.com/iqmind.lk/" target="_blank" class="follow-btn">Follow us on IQ Mind</a>
+            <button class="home-btn" onclick="goHome()">🏠 Home</button>
+        </div>
+    </div>
+
+    <!-- SOCIAL REGISTRATION BUTTONS -->
+    <div class="social-buttons">
+        <!-- WhatsApp -->
+        <a href="https://wa.me/94785071666" target="_blank" class="social-btn btn-whatsapp">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            රෙජිස්ටර් විමට WhatsApp
+        </a>
+
+        <!-- Telegram -->
+        <a href="https://t.me/sandaruwancomputers" target="_blank" class="social-btn btn-telegram">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
+            </svg>
+            රෙජිස්ටර් විමට Telegram
+        </a>
+
+        <!-- Facebook -->
+        <a href="https://web.facebook.com/iqmind.lk" target="_blank" class="social-btn btn-facebook">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+            රෙජිස්ටර් විමට Facebook
+        </a>
+    </div>
+</div>
+
+<script>
+function goHome(){ window.location.href = "index.html"; }
+
+const quizData = [
+    { q: "මීටර් 1000ක් යනු කිලෝමීටර් කීයක්ද?", options: ["1 km", "10 km", "100 km", "0.1 km"], correct: 0 },
+    { q: "ශ්‍රි ලංකාවේ ප්‍රධානතම ආගමික මධ්‍යස්ථානයක් වන 'දළදා මාළිගාව' පිහිටා ඇත්තේ කුමන නගරයේද?", options: ["අනුරාධපුරය", "පොළොන්නරුව", "මහනුවර", "කතරගම"], correct: 2 },
+    { q: "6, 12, 18, 24 රටාවේ ඊළඟ සංඛ්‍යාව කුමක්ද?", options: ["28", "30", "32", "36"], correct: 1 },
+    { q: "ලීටර් 1ක මිලිලීටර් කීයක් තිබේද?", options: ["100 ml", "500 ml", "1000 ml", "10 ml"], correct: 2 },
+    { q: "ශ්‍රී ලංකාවේ වැඩිම දිස්ත්‍රික්ක සංඛ්‍යාවක් ඇති පළාත කුමක්ද?", options: ["බස්නාහිර", "උතුරු", "මධ්‍යම", "වයඹ"], correct: 1 },
+    { q: "පහත වචන අතරින් නිවැරදි අක්ෂර වින්‍යාසය සහිත වචනය තෝරන්න.", options: ["ප්‍රදර්ශණය", "ප්‍රදර්ශනය", "ප්ලදර්ශනය", "ප්‍රධර්ශනය"], correct: 1 },
+    { q: "පරිසරයේ ඇති කාබන්ඩයොක්සයිඩ් අවශෝෂණය කර ඔක්සිජන් මුදා හරින්නේ කවුද?", options: ["සතුන්", "මිනිසුන්", "ශාක", "වාහන"], correct: 2 },
+    { q: "පැය භාගයකට මිනිත්තු කීයක් තිබේද?", options: ["15", "30", "45", "60"], correct: 1 },
+    { q: "මිනිත්තු 120ක් යනු පැය කීයක්ද?", options: ["පැය 1", "පැය 2", "පැය 3", "පැය 4"], correct: 1 },
+    { q: "පහත සංඛ්‍යා අතරින් 5න් බෙදූ විට ඉතිරියක් රහිතව බෙදිය හැකි සංඛ්‍යාව කුමක්ද?", options: ["123", "456", "780", "902"], correct: 2 },
+    { q: "පෙරවරු 10.30 සිට පස්වරු 1.30 දක්වා ගත වූ කාලය කොපමණද?", options: ["පැය 2", "පැය 2 විනාඩි 30", "පැය 3", "පැය 4"], correct: 2 },
+    { q: "සමපාද ත්‍රිකෝණයක ඇති සමාන පාද ගණන කීයද?", options: ["1", "2", "3", "4"], correct: 2 },
+    { q: "රුපියල් 12.50ක් වටිනා පැන්සල් 4ක් මිලදී ගැනීමට අවශ්‍ය මුදල කොපමණද?", options: ["රු. 40", "රු. 45", "රු. 50", "රු. 60"], correct: 2 },
+    { q: "'ගුණ යහපත් ළමයා' මෙහි විශේෂණ පදය කුමක්ද?", options: ["ළමයා", "ගුණ යහපත්", "යහපත් ළමයා", "ගුණ"], correct: 1 },
+    { q: "ශ්‍රී ලංකාවේ ජාතික පුෂ්පය කුමක්ද?", options: ["නෙළුම්", "මානෙල්", "නිල් මානෙල්", "පිච්ච"], correct: 2 },
+    { q: "අපේ රටේ ජාතික කොඩියේ සිටින සිංහයාගේ දකුණු අතේ ඇති වස්තුව කුමක්ද?", options: ["කඩුව", "ධජය", "මලක්", "පලිහක්"], correct: 0 },
+    { q: "අද සඳුදා නම්, අනිද්දා දිනය කුමක්ද?", options: ["අඟහරුවාදා", "බදාදා", "බ්‍රහස්පතින්දා", "ඉරිදා"], correct: 1 },
+    { q: "ත්‍රිකෝණයක ඇති ශීර්ෂ ගණන කීයද?", options: ["2", "3", "4", "5"], correct: 1 },
+    { q: "ශ්‍රී ලංකාවේ දිගම ගඟ කුමක්ද?", options: ["කළු ගඟ", "කැලණි ගඟ", "නිල්වලා ගඟ", "මහවැලි ගඟ"], correct: 3 }
+];
+
+let questions = [];
+let currentIdx = 0;
+let score = 0;
+let answersLog = [];
+let timerInterval;
+let timeLeft = 15;
+
+function prepareQuestions() {
+    let allQuestions = [...quizData];
+    for (let i = allQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [allQuestions[i], allQuestions[j]] = [allQuestions[j], allQuestions[i]];
+    }
+    questions = allQuestions.slice(0, 10);
+}
+
+function startTimer() {
+    clearInterval(timerInterval);
+    timeLeft = 15;
+    document.getElementById("time-left").innerText = timeLeft;
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("time-left").innerText = timeLeft;
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            handleTimeOut();
+        }
+    }, 1000);
+}
+
+function handleTimeOut() {
+    const correctIdx = questions[currentIdx].correct;
+    const options = document.querySelectorAll(".option");
+    options.forEach(b => b.style.pointerEvents = "none");
+    options[correctIdx].classList.add("correct");
+    answersLog.push({ q: questions[currentIdx].q, correct: questions[currentIdx].options[correctIdx], isCorrect: false });
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function loadQuestion(){
+    startTimer();
+    const q = questions[currentIdx];
+    document.getElementById("current-q-num").innerText = currentIdx + 1;
+    document.getElementById("question-text").innerText = q.q;
+    const list = document.getElementById("options-list");
+    list.innerHTML = "";
+    document.getElementById("next-btn").style.display = "none";
+    q.options.forEach((opt,i)=>{
+        const btn = document.createElement("button");
+        btn.className = "option";
+        btn.innerText = opt;
+        btn.onclick = () => selectOption(i,btn);
+        list.appendChild(btn);
+    });
+}
+
+function selectOption(index,element){
+    clearInterval(timerInterval);
+    const correctIdx = questions[currentIdx].correct;
+    const options = document.querySelectorAll(".option");
+    options.forEach(b=>b.style.pointerEvents="none");
+    let isCorrect = index === correctIdx;
+    if(isCorrect){
+        element.classList.add("correct");
+        score++;
+    } else {
+        element.classList.add("wrong");
+        options[correctIdx].classList.add("correct");
+    }
+    answersLog.push({ q: questions[currentIdx].q, correct: questions[currentIdx].options[correctIdx], isCorrect: isCorrect });
+    document.getElementById("next-btn").style.display = "block";
+}
+
+function handleNext(){
+    currentIdx++;
+    if(currentIdx < questions.length){
+        loadQuestion();
+    } else {
+        showResults();
+    }
+}
+
+function showResults(){
+    clearInterval(timerInterval);
+    document.getElementById("quiz-area").classList.add("hidden");
+    document.getElementById("result-area").classList.remove("hidden");
+    const percent = Math.round((score/questions.length)*100);
+    document.getElementById("final-score").innerText = `Score: ${score}/${questions.length} (${percent}%)`;
+    let html = "<strong>Wrong Answers Only:</strong><br><br>";
+    let hasWrong = false;
+    answersLog.forEach((item)=>{
+        if(!item.isCorrect){
+            hasWrong = true;
+            html += `<div class='summary-item'>${item.q}<br><span style='color:red;font-weight:bold'>Correct: ${item.correct}</span></div>`;
+        }
+    });
+    document.getElementById("summary-content").innerHTML = hasWrong ? html : "All correct! Well done.";
+}
+
+function restartQuiz() {
+    currentIdx = 0;
+    score = 0;
+    answersLog = [];
+    document.getElementById("result-area").classList.add("hidden");
+    document.getElementById("quiz-area").classList.remove("hidden");
+    prepareQuestions();
+    loadQuestion();
+}
+
+prepareQuestions();
+loadQuestion();
+</script>
+
+</body>
+</html>
