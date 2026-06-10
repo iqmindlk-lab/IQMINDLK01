@@ -5,126 +5,450 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IQ MIND - PRO Portal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
-        body { 
-            font-family: 'Poppins', Arial, sans-serif; 
-            display: flex; justify-content: center; align-items: center; 
-            min-height: 100vh; background-color: #06031f; color: white; margin: 0; padding: 20px;
-            box-sizing: border-box;
-        }
-        .container { 
-            text-align: center; background: #00a8ff; padding: 30px; 
-            border-radius: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
-            width: 100%; max-width: 380px;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Poppins', Arial, sans-serif;
+            min-height: 100vh;
+            background-color: #06031f;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 24px 16px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        /* ===== PROMO BANNER ===== */
-        .promo-banner {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            border-radius: 18px;
-            padding: 16px 14px;
-            margin-bottom: 22px;
-            text-align: justify;
-            box-shadow: 0 6px 20px rgba(255,65,108,0.45);
+.back-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: right;
+    gap: 8px;
+    margin-bottom: 10px;
+    transition: background 0.3s;
+}
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(0,168,255,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(255,65,108,0.10) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
         }
-        .promo-brand {
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: linear-gradient(135deg, #00a8ff 0%, #0070cc 100%);
+            border-radius: 24px;
+            padding: 22px 24px 18px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(0,168,255,0.35), 0 2px 8px rgba(0,0,0,0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 130px; height: 130px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+
+        .header-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .brand-title {
             font-size: 22px;
             font-weight: 900;
-            letter-spacing: 1px;
             color: #fff;
-            text-align: center;
-            display: block;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            letter-spacing: 2px;
+            text-shadow: 0 3px 12px rgba(0,0,0,0.3);
+            line-height: 1;
         }
-        .promo-body {
-            font-size: 13.5px;
-            color: rgba(255,255,255,0.95);
-            line-height: 1.65;
-            margin-bottom: 12px;
+
+        .brand-sub {
+            font-size: 12px;
+            color: rgba(255,255,255,0.70);
+            margin-top: 5px;
+            font-weight: 600;
+            letter-spacing: 1px;
         }
-        .promo-price {
-            display: block;
+
+        /* ===== INFO CARD ===== */
+        .info-card {
+            background: linear-gradient(135deg, #00a8ff 0%, #0070cc 100%);
+            border-radius: 20px;
+            padding: 20px 22px;
+            width: 100%;
+            box-shadow: 0 8px 30px rgba(0,168,255,0.30);
+        }
+
+        .info-card-title {
             font-size: 18px;
             font-weight: 900;
             color: #fff;
             text-align: center;
-            background: rgba(0,0,0,0.18);
-            border-radius: 10px;
-            padding: 8px 0;
-            margin-top: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        /* ===== CATEGORY BUTTONS ===== */
-        .section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: rgba(255,255,255,0.85);
             margin-bottom: 12px;
             letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px rgba(0,0,0,0.2);
         }
-        .cat-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 15px;
-            font-weight: bold;
-            font-size: 15px;
-            text-decoration: none;
-            color: white;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-            transition: transform 0.2s, box-shadow 0.2s;
-            box-sizing: border-box;
-        }
-        .cat-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); color: white; }
-        .cat-gk   { background: linear-gradient(135deg, #f7971e, #ffd200); color: #1a1a1a !important; }
-        .cat-iq   { background: linear-gradient(135deg, #8e2de2, #4a00e0); }
-        .cat-g5   { background: linear-gradient(135deg, #20bf6b, #059669); }
 
-        .divider {
+        .info-card-body {
+            font-size: 13px;
+            color: rgba(255,255,255,0.90);
+            line-height: 1.75;
+            text-align: left;
+            margin-bottom: 14px;
+        }
+
+        .info-price-badge {
+            background: rgba(0,0,0,0.25);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .info-price-badge i { font-size: 18px; color: #ffe082; }
+        .info-price-badge .price { color: #ffe082; font-size: 16px; }
+
+        /* ===== SECTION LABEL ===== */
+        .section-label {
+            width: 100%;
+            font-size: 13px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.55);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            padding-left: 4px;
+            margin-bottom: -4px;
+        }
+
+        /* ===== MAIN BUTTONS ===== */
+        .buttons-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .main-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            padding: 20px 22px;
             border: none;
-            border-top: 1px solid rgba(255,255,255,0.25);
-            margin: 20px 0;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.22s ease, box-shadow 0.22s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(255,255,255,0.08);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .main-btn:hover::before { opacity: 1; }
+        .main-btn:hover { transform: translateY(-4px) scale(1.02); }
+        .main-btn:active { transform: scale(0.98); }
+
+        .btn-gk {
+            background: linear-gradient(135deg, #f7971e 0%, #ffd200 100%);
+            box-shadow: 0 10px 35px rgba(247,151,30,0.45);
+        }
+        .btn-gk:hover { box-shadow: 0 16px 45px rgba(247,151,30,0.60); }
+        .btn-gk .btn-title, .btn-gk .btn-desc { color: #1a1a1a !important; text-shadow: none !important; }
+        .btn-gk .btn-arrow { color: rgba(0,0,0,0.35) !important; }
+        .btn-gk:hover .btn-arrow { color: rgba(0,0,0,0.65) !important; }
+
+        .btn-iq {
+            background: linear-gradient(135deg, #8e2de2 0%, #4a00e0 100%);
+            box-shadow: 0 10px 35px rgba(142,45,226,0.45);
+        }
+        .btn-iq:hover { box-shadow: 0 16px 45px rgba(142,45,226,0.60); }
+
+        .btn-g5 {
+            background: linear-gradient(135deg, #20bf6b 0%, #059669 100%);
+            box-shadow: 0 10px 35px rgba(32,191,107,0.45);
+        }
+        .btn-g5:hover { box-shadow: 0 16px 45px rgba(32,191,107,0.60); }
+
+        .btn-icon-wrap {
+            background: rgba(255,255,255,0.18);
+            border-radius: 13px;
+            width: 52px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .btn-icon-wrap i { font-size: 24px; color: #fff; }
+        .btn-gk .btn-icon-wrap i { color: #1a1a1a; }
+
+        .btn-text {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+            flex: 1;
+        }
+
+        .btn-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: #fff;
+            letter-spacing: 0.5px;
+            line-height: 1.2;
+            text-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+
+        .btn-desc {
+            font-size: 11px;
+            color: rgba(255,255,255,0.78);
+            font-weight: 500;
+            margin-top: 3px;
+        }
+
+        .btn-arrow {
+            font-size: 20px;
+            color: rgba(255,255,255,0.55);
+            flex-shrink: 0;
+            transition: transform 0.2s;
+        }
+
+        .main-btn:hover .btn-arrow {
+            transform: translateX(5px);
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* ===== DIVIDER ===== */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            color: rgba(255,255,255,0.3);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,255,255,0.15);
         }
 
         /* ===== SOCIAL BUTTONS ===== */
-        .social-btn {
-            display: flex; align-items: center; justify-content: center;
-            width: 100%; padding: 12px; margin-top: 10px;
-            border-radius: 12px; font-weight: bold; text-decoration: none;
-            color: white; font-size: 14px; transition: 0.3s; box-sizing: border-box;
+        .social-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
         }
-        .social-btn i { margin-right: 10px; font-size: 18px; }
-        .wa-btn { background: #25d366; }
-        .tg-btn { background: #0088cc; }
-        .fb-btn { background: #1877f2; }
-        .social-btn:hover { opacity: 0.9; transform: scale(1.02); color: white; }
+
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 20px;
+            border-radius: 14px;
+            text-decoration: none;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .social-btn:hover { transform: translateY(-3px); }
+        .social-btn i { font-size: 20px; }
+
+        .social-btn .s-badge {
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 2px 10px;
+            font-size: 11px;
+            margin-left: 4px;
+        }
+
+        .btn-whatsapp {
+            background: #25d366;
+            box-shadow: 0 6px 22px rgba(37,211,102,0.40);
+        }
+        .btn-whatsapp:hover { box-shadow: 0 10px 30px rgba(37,211,102,0.55); color: #fff; }
+
+        .btn-telegram {
+            background: #0088cc;
+            box-shadow: 0 6px 22px rgba(0,136,204,0.40);
+        }
+        .btn-telegram:hover { box-shadow: 0 10px 30px rgba(0,136,204,0.55); color: #fff; }
+
+        .btn-facebook {
+            background: #1877f2;
+            box-shadow: 0 6px 22px rgba(24,119,242,0.40);
+        }
+        .btn-facebook:hover { box-shadow: 0 10px 30px rgba(24,119,242,0.55); color: #fff; }
+
+        /* ===== FOOTER ===== */
+        .footer-note {
+            color: rgba(255,255,255,0.28);
+            font-size: 11px;
+            text-align: center;
+            padding-bottom: 4px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="promo-banner">
-        <span class="promo-brand">👑 IQ MIND PRO</span>
-        <div class="promo-body">
-            IQ MIND PRO සමග සම්බන්ද විමෙන් (සිංහල ගණිතය සාමාන්‍ය දැනිම රුප සටහන් ගැටලු) 500කට වැඩි ප්‍රමාණයකට සහභාගි විය හැකි අතර අනුමාන ප්‍රශ්න පත්‍ර, පසුගිය විබාග ප්‍රශන පත්‍ර ඉතා පැහැදිලිව සැකසු PDF ඔබට ඩවුන්ලෝඩ් කරගත හැක.
-        </div>
-        <span class="promo-price">📅 මාස හයක් සදහා ගාස්තුව රු.600ක් පමණයි</span>
+
+    <!-- Header -->
+    <div class="header">
+        <span class="header-icon">👑</span>
+        <div class="brand-title">IQ MIND PRO</div>
+        <div class="brand-sub">PRO PORTAL · GRADE 5 · GK · IQ</div>
     </div>
 
-    <div class="section-title">📚 ප්‍රශ්න එකතුව</div>
+<button onclick="history.back()" style="
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-bottom: 15px;
+    font-family: 'Poppins', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 8px;">
+    <i class="fas fa-chevron-left"></i> ආපසු
+</button>
 
-    <a href="collection.html" class="cat-btn cat-gk">📖 තරග විභාග සදහා සාමාන්‍ය දැනීම - GK</a>
-    <a href="freeiq.html" class="cat-btn cat-iq">🧠 තරග විභාග සදහා බුද්ධි පරීක්ෂණය - IQ</a>
-    <a href="freegrade5.html" class="cat-btn cat-g5">🎓 GRADE 5</a>
+    <!-- Info Card -->
+    <div class="info-card">
+        <div class="info-card-title">
+            <span>📚</span> IQ MIND PRO ගැන
+        </div>
+        <div class="info-card-body">
+            IQ MIND PRO සමඟ සම්බන්ධ වීමෙන් (සිංහල ගණිතය සාමාන්‍ය දැනීම රූප සටහන් ගැටළු) 500කට වැඩි ප්‍රමාණයකට සහභාගී විය හැකි අතර අනුමාන ප්‍රශ්න පත්‍ර, පසුගිය විභාග ප්‍රශ්න පත්‍ර ඉතා පැහැදිලිව සැකසු PDF ඔබට ඩවුන්ලෝඩ් කරගත හැක.
+        </div>
+        <div class="info-price-badge">
+            <i class="fas fa-calendar-alt"></i>
+            <span>මාස හයක් සඳහා ගාස්තුව රු.<span class="price">600</span>ක් පමණයි</span>
+        </div>
+    </div>
 
-    <hr class="divider">
+    <!-- Category Buttons -->
+    <div class="section-label">📚 ප්‍රශ්න එකතුව</div>
+    <div class="buttons-grid">
 
-    <a href="https://wa.me/94785071666" class="social-btn wa-btn"><i class="fab fa-whatsapp"></i> WhatsApp හරහා රෙජිස්ටර් වෙන්න</a>
-    <a href="https://t.me/sandaruwancomputers" class="social-btn tg-btn"><i class="fab fa-telegram"></i> Telegram හරහා රෙජිස්ටර් වෙන්න</a>
-    <a href="https://web.facebook.com/iqmind.lk" class="social-btn fb-btn"><i class="fab fa-facebook"></i> Facebook හරහා රෙජිස්ටර් වෙන්න</a>
+        <a href="collection.html" class="main-btn btn-gk">
+            <div class="btn-icon-wrap">
+                <i class="fas fa-book-open"></i>
+            </div>
+            <div class="btn-text">
+                <span class="btn-title">සාමාන්‍ය දැනීම - GK</span>
+                <span class="btn-desc">තරග විභාග සඳහා General Knowledge</span>
+            </div>
+            <i class="fas fa-chevron-right btn-arrow"></i>
+        </a>
+
+        <a href="freeiq.html" class="main-btn btn-iq">
+            <div class="btn-icon-wrap">
+                <i class="fas fa-brain"></i>
+            </div>
+            <div class="btn-text">
+                <span class="btn-title">බුද්ධි පරීක්ෂණය - IQ</span>
+                <span class="btn-desc">තරග විභාග සඳහා IQ Tests</span>
+            </div>
+            <i class="fas fa-chevron-right btn-arrow"></i>
+        </a>
+
+        <a href="freegrade5.html" class="main-btn btn-g5">
+            <div class="btn-icon-wrap">
+                <i class="fas fa-graduation-cap"></i>
+            </div>
+            <div class="btn-text">
+                <span class="btn-title">🎓 GRADE 5</span>
+                <span class="btn-desc">5 ශ්‍රේණිය ශිෂ්‍යත්ව විභාග · Practice</span>
+            </div>
+            <i class="fas fa-chevron-right btn-arrow"></i>
+        </a>
+
+    </div>
+
+    <!-- Social Divider -->
+    <div class="divider">REGISTER කරන්න</div>
+
+    <!-- Social Buttons -->
+    <div class="social-grid">
+
+        <a href="https://wa.me/94785071666" target="_blank" class="social-btn btn-whatsapp">
+            <i class="fab fa-whatsapp"></i>
+            WhatsApp හරහා Register වන්න
+        </a>
+
+        <a href="https://t.me/sandaruwancomputers" target="_blank" class="social-btn btn-telegram">
+            <i class="fab fa-telegram-plane"></i>
+            Telegram හරහා Register වන්න
+            <span class="s-badge">JOIN</span>
+        </a>
+
+        <a href="https://web.facebook.com/iqmind.lk" target="_blank" class="social-btn btn-facebook">
+            <i class="fab fa-facebook"></i>
+            IQ MIND Follow කරන්න
+            <span class="s-badge">FOLLOW</span>
+        </a>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-note">© 2024 IQ MIND PRO · All Rights Reserved</div>
+
 </div>
 
 </body>
