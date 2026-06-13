@@ -5,15 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IQ MIND PRO - Papers & Notes</title>
     
-    <script>
-      (function() {
-        const userSession = sessionStorage.getItem("iq_user_id");
-        // session එකක් නැත්නම් කෙලින්ම index.html එකට යවන්න
-        if (!userSession) {
-          window.location.href = "proiqmind.html";
-        }
-      })();
-    </script>
+<script type="module">
+  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  // (initializeApp සහ db අර්ථ දැක්වීම මෙහි කරන්න)
+
+  const userId = localStorage.getItem("iq_user_id");
+  const db = getFirestore(); // db එක කලින් initialize කර ඇත්නම් මෙය භාවිතා කරන්න
+
+  // 1. විනාඩි 5ක අක්‍රියතා ටයිමරය (Auto-Logout)
+  let idleTime = 0;
+  function resetIdleTime() { idleTime = 0; }
+  document.onmousemove = resetIdleTime;
+  document.onkeypress = resetIdleTime;
+
+  setInterval(async () => {
+      idleTime++;
+      if (idleTime > 5) { // විනාඩි 5ක්
+          alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ලොග් අවුට් විය.");
+          const docRef = doc(db, "allowed_users", userId);
+          await updateDoc(docRef, { is_logged_in: false });
+          window.location.href = "index.html";
+      }
+  }, 60000); // සෑම මිනිත්තුවකට වරක් පරීක්ෂා කරයි
+
+  // 2. පිටුවෙන් ඉවත් වන විට Logout කිරීම
+  window.addEventListener("beforeunload", async () => {
+      const docRef = doc(db, "allowed_users", userId);
+      await updateDoc(docRef, { is_logged_in: false });
+  });
+</script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
