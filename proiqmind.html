@@ -11,6 +11,16 @@
             display: flex; justify-content: center; align-items: center; 
             min-height: 100vh; background-color: #06031f; color: white; margin: 0; padding: 20px;
         }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse at 20% 30%, rgba(0,168,255,0.12) 0%, transparent 55%),
+                radial-gradient(ellipse at 80% 70%, rgba(255,65,108,0.10) 0%, transparent 55%);
+            pointer-events: none;
+            z-index: 0;
+        }
         .container { 
             text-align: center; background: #00a8ff; padding: 30px; 
             border-radius: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); 
@@ -88,7 +98,7 @@
     <div class="promo-banner">
         <span class="promo-brand">👑 IQ MIND PRO</span>
         <div class="promo-body">
-            IQ MIND PRO සමග සම්බන්ද විමෙන් (සිංහල ගණිතය සාමාන්‍ය දැනිම රුප සටහන් ගැටලු) 1000කට ආසන්න ප්‍රමාණයකට සහභාගි විය හැකි අතර අනුමාන ප්‍රශ්න පත්‍ර, පසුගිය විබාග ප්‍රශන පත්‍ර ඉතා පැහැදිලිව සැකසු PDF ඔබට ඩවුන්ලෝඩ් කරගත හැක.
+            IQ MIND PRO සමග සම්බන්ද විමෙන් (සිංහල ගණිතය සාමාන්‍ය දැනිම රුප සටහන් ගැටලු) 500කට වැඩි ප්‍රමාණයකට සහභාගි විය හැකි අතර අනුමාන ප්‍රශ්න පත්‍ර, පසුගිය විබාග ප්‍රශන පත්‍ර ඉතා පැහැදිලිව සැකසු PDF ඔබට ඩවුන්ලෝඩ් කරගත හැක.
         </div>
         <span class="promo-price">📅 මාස හයක් සදහා ගාස්තුව රු.600ක් පමණයි</span>
     </div>
@@ -136,6 +146,8 @@
           const docSnap = await getDoc(docRef);
 
           if (docSnap.exists()) {
+              // ✅ Login සාර්ථකයි - session save කරනවා
+              sessionStorage.setItem("iq_user_id", typedId);
               window.location.href = "propage.html"; 
           } else {
               errorField.innerText = "වැරදි User ID එකක්! කරුණාකර අපව සම්බන්ධ කරගන්න.";
