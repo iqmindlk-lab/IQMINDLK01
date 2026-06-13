@@ -25,7 +25,6 @@
 
       if (!userId) { window.location.href = "proiqmind.html"; }
 
-      // --- සබ්ස්ක්‍රිප්ෂන් කාලය පෙන්වීමේ කොටස ---
       async function checkSubscription() {
           try {
               const docRef = doc(db, "allowed_users", userId);
@@ -36,7 +35,6 @@
                   const today = new Date();
                   const timeDiff = expiryDate.getTime() - today.getTime();
                   const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                  
                   const clockField = document.getElementById("subClock");
                   if (daysLeft > 0) {
                       clockField.innerHTML = `<i class="fas fa-clock"></i> PRO ගිණුමේ වලංගු කාලය තව දින <span>${daysLeft} කින්</span> අවසන් වේ.`;
@@ -48,7 +46,6 @@
       }
       checkSubscription();
 
-      // --- මැනුවල් ලොග් අවුට් වීමේ ක්‍රියාවලිය ---
       async function manualLogout() {
           if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්‍යද?")) {
               try {
@@ -62,10 +59,8 @@
               }
           }
       }
-      // HTML බටන් එකට සම්බන්ධ කිරීම සඳහා window object එකට එකතු කිරීම
       window.manualLogout = manualLogout;
 
-      // විනාඩි 5ක අක්‍රියතා ටයිමරය
       let idleTime = 0;
       function resetIdleTime() { idleTime = 0; }
       document.onmousemove = resetIdleTime;
@@ -129,7 +124,6 @@
             gap: 16px;
         }
 
-        /* ===== BACK BUTTON ===== */
         .back-btn {
             align-self: flex-start;
             display: flex;
@@ -144,12 +138,8 @@
             padding: 8px 14px;
             transition: 0.2s;
         }
-        .back-btn:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.13);
-        }
+        .back-btn:hover { color: #fff; background: rgba(255,255,255,0.13); }
 
-        /* ===== HEADER ===== */
         .header {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             border-radius: 24px;
@@ -160,7 +150,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .header::after {
             content: '';
             position: absolute;
@@ -169,19 +158,16 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.07);
         }
-
         .header-icon {
             font-size: 38px;
             display: block;
             margin-bottom: 6px;
             animation: bounce 2.5s ease-in-out infinite;
         }
-
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
-
         .brand-title {
             font-size: 22px;
             font-weight: 900;
@@ -189,7 +175,6 @@
             letter-spacing: 1.5px;
             text-shadow: 0 3px 12px rgba(0,0,0,0.3);
         }
-
         .brand-sub {
             font-size: 12px;
             color: rgba(255,255,255,0.82);
@@ -197,7 +182,6 @@
             font-weight: 600;
         }
 
-        /* ===== SECTION LABEL ===== */
         .section-label {
             width: 100%;
             display: flex;
@@ -216,35 +200,35 @@
             background: rgba(255,255,255,0.12);
         }
 
-        /* ===== PAPERS LIST ===== */
+        /* ===== PAPER CARD ===== */
         .papers-list {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
             width: 100%;
         }
 
         .paper-card {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.09);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .paper-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 32px rgba(0,0,0,0.35);
+        }
+
+        /* Top row: year badge + name */
+        .card-top {
             display: flex;
             align-items: center;
             gap: 14px;
-            width: 100%;
-            padding: 16px 18px;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.09);
-            border-radius: 18px;
-            transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
-            position: relative;
-            overflow: hidden;
+            padding: 16px 18px 14px;
         }
 
-        .paper-card:hover {
-            background: rgba(255,255,255,0.09);
-            transform: translateY(-2px);
-            box-shadow: 0 8px 28px rgba(0,0,0,0.3);
-        }
-
-        /* Year badge */
         .year-badge {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             border-radius: 12px;
@@ -257,14 +241,12 @@
             flex-shrink: 0;
             box-shadow: 0 4px 14px rgba(255,65,108,0.4);
         }
-
         .year-badge .year-num {
             font-size: 17px;
             font-weight: 900;
             color: #fff;
             line-height: 1;
         }
-
         .year-badge .year-label {
             font-size: 8px;
             font-weight: 700;
@@ -274,59 +256,64 @@
             text-transform: uppercase;
         }
 
-        /* Paper info */
         .paper-info {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 2px;
         }
-
         .paper-name {
             font-size: 13.5px;
             font-weight: 700;
             color: #fff;
             line-height: 1.3;
         }
-
         .paper-meta {
             font-size: 11px;
             color: rgba(255,255,255,0.45);
             font-weight: 500;
         }
 
-        /* Download button */
+        /* Bottom row: two download buttons */
+        .card-btns {
+            display: flex;
+            gap: 10px;
+            padding: 0 16px 16px;
+        }
+
         .download-btn {
+            flex: 1;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 6px;
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            color: #fff;
             font-size: 11.5px;
             font-weight: 700;
-            padding: 9px 14px;
+            padding: 10px 10px;
             border-radius: 11px;
             text-decoration: none;
-            flex-shrink: 0;
-            box-shadow: 0 4px 14px rgba(255,65,108,0.38);
             transition: box-shadow 0.2s, transform 0.2s;
             white-space: nowrap;
         }
+        .download-btn:active { transform: scale(0.97); }
+        .download-btn i { font-size: 12px; }
 
-        .download-btn:hover {
-            box-shadow: 0 6px 22px rgba(255,65,108,0.56);
-            transform: scale(1.04);
+        /* Paper PDF button - red */
+        .btn-paper {
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(255,65,108,0.38);
         }
+        .btn-paper:hover { box-shadow: 0 6px 22px rgba(255,65,108,0.56); transform: scale(1.03); }
 
-        .download-btn:active {
-            transform: scale(0.97);
+        /* Marking Scheme button - amber/gold */
+        .btn-marking {
+            background: linear-gradient(135deg, #f7b733 0%, #e08900 100%);
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(247,183,51,0.35);
         }
+        .btn-marking:hover { box-shadow: 0 6px 22px rgba(247,183,51,0.52); transform: scale(1.03); }
 
-        .download-btn i {
-            font-size: 13px;
-        }
-
-        /* ===== FOOTER ===== */
         .footer-note {
             color: rgba(255,255,255,0.28);
             font-size: 11px;
@@ -339,142 +326,194 @@
 
 <div class="container">
 
-    <!-- Back -->
-    <a href="papers-notes.html" class="back-btn">
+    <a href="#" class="back-btn" onclick="window.history.back(); return false;">
         <i class="fas fa-arrow-left"></i> ආපසු යන්න
     </a>
 
-    <!-- Header -->
     <div class="header">
         <span class="header-icon">📜</span>
         <div class="brand-title">PAST PAPERS</div>
         <div class="brand-sub">ශිෂ්‍යත්ව විභාගය · පසුගිය ප්‍රශ්න පත්‍ර PDF</div>
     </div>
 
-    <!-- Label -->
     <div class="section-label">papers</div>
 
-    <!-- Papers List -->
     <div class="papers-list">
 
         <!-- 2018 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2018</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2018</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2018</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2018</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2018" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2018" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2018" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2019 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2019</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2019</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2019</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2019</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2019" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2019" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2019" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2020 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2020</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2020</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2020</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2020</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2020" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2020" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2020" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2021 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2021</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2021</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2021</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2021</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2021" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2021" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2021" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2022 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2022</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2022</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2022</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2022</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2022" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2022" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2022" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2023 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2023</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2023</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2023</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2023</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2023" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2023" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2023" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2024 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2024</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2024</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2024</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2024</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2024" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2024" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2024" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
         <!-- 2025 -->
         <div class="paper-card">
-            <div class="year-badge">
-                <span class="year-num">2025</span>
-                <span class="year-label">year</span>
+            <div class="card-top">
+                <div class="year-badge">
+                    <span class="year-num">2025</span>
+                    <span class="year-label">year</span>
+                </div>
+                <div class="paper-info">
+                    <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2025</span>
+                    <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+                </div>
             </div>
-            <div class="paper-info">
-                <span class="paper-name">ශිෂ්‍යත්ව විභාගය 2025</span>
-                <span class="paper-meta">Grade 5 Scholarship · PDF</span>
+            <div class="card-btns">
+                <a href="YOUR_PDF_LINK_2025" class="download-btn btn-paper" target="_blank" download>
+                    <i class="fas fa-download"></i> Paper Download
+                </a>
+                <a href="YOUR_MARKING_LINK_2025" class="download-btn btn-marking" target="_blank" download>
+                    <i class="fas fa-check-circle"></i> Marking Scheme
+                </a>
             </div>
-            <a href="YOUR_PDF_LINK_2025" class="download-btn" target="_blank" download>
-                <i class="fas fa-download"></i> Download
-            </a>
         </div>
 
     </div>
