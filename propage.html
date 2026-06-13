@@ -25,7 +25,7 @@
 
       if (!userId) { window.location.href = "proiqmind.html"; }
 
-      // --- සබ්ස්ක්‍රිප්ෂන් කාලය පෙන්වීමේ කොටස ---
+      // --- සබ්ස්ක්රිප්ෂන් කාලය පෙන්වීමේ කොටස - මාස සහ දින ---
       async function checkSubscription() {
           try {
               const docRef = doc(db, "allowed_users", userId);
@@ -35,11 +35,23 @@
                   const expiryDate = data.expiry_date.toDate();
                   const today = new Date();
                   const timeDiff = expiryDate.getTime() - today.getTime();
-                  const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                  const totalDaysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
                   
                   const clockField = document.getElementById("subClock");
-                  if (daysLeft > 0) {
-                      clockField.innerHTML = `<i class="fas fa-clock"></i> PRO ගිණුමේ වලංගු කාලය තව දින <span>${daysLeft} කින්</span> අවසන් වේ.`;
+                  if (totalDaysLeft > 0) {
+                      const months = Math.floor(totalDaysLeft / 30);
+                      const days = totalDaysLeft % 30;
+                      
+                      let timeText = "";
+                      if (months > 0) {
+                          timeText += `<span>මාස ${months}</span>`;
+                      }
+                      if (days > 0) {
+                          if (months > 0) timeText += " ";
+                          timeText += `<span>දින ${days}</span>`;
+                      }
+                      
+                      clockField.innerHTML = `<i class="fas fa-clock"></i> PRO ගිණුමේ වලංගු කාලය තව ${timeText} කින් අවසන් වේ.`;
                   } else {
                       clockField.innerHTML = `<i class="fas fa-exclamation-circle"></i> ඔබගේ වලංගු කාලය අවසන් වී ඇත!`;
                   }
@@ -48,9 +60,9 @@
       }
       checkSubscription();
 
-      // --- මැනුවල් ලොග් අවුට් වීමේ ක්‍රියාවලිය ---
+      // --- මැනුවල් ලොග් අවුට් වීමේ ක්රියාවලිය ---
       async function manualLogout() {
-          if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්‍යද?")) {
+          if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්යද?")) {
               try {
                   const docRef = doc(db, "allowed_users", userId);
                   await updateDoc(docRef, { is_logged_in: false });
@@ -65,7 +77,7 @@
       // HTML බටන් එකට සම්බන්ධ කිරීම සඳහා window object එකට එකතු කිරීම
       window.manualLogout = manualLogout;
 
-      // විනාඩි 5ක අක්‍රියතා ටයිමරය
+      // විනාඩි 5ක අක්රියතා ටයිමරය
       let idleTime = 0;
       function resetIdleTime() { idleTime = 0; }
       document.onmousemove = resetIdleTime;
@@ -74,7 +86,7 @@
       setInterval(async () => {
           idleTime++;
           if (idleTime > 5) {
-              alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ලොග් අවුට් විය.");
+              alert("ඔබ විනාඩි 5ක් අක්රියව සිටි නිසා ලොග් අවුට් විය.");
               const docRef = doc(db, "allowed_users", userId);
               await updateDoc(docRef, { is_logged_in: false });
               localStorage.removeItem("iq_user_id");
@@ -144,6 +156,33 @@
             box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
             transform: translateY(-2px);
         }
+
+        /* අලුත් Logout Button - Follow button එකට යටින් */
+        .logout-btn-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 20px;
+            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
+            border-radius: 14px;
+            border: none;
+            text-decoration: none;
+            color: #fff;
+            font-size: 15px;
+            font-weight: 700;
+            box-shadow: 0 6px 22px rgba(255,65,108,0.45);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .logout-btn-bottom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255,65,108,0.60);
+        }
+        .logout-btn-bottom i { font-size: 18px; }
 
         .container {
             position: relative;
@@ -457,19 +496,15 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <button class="logout-btn-top" onclick="manualLogout()">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-            
+        <div class="header">           
 <span class="crown-icon">👑</span>
         <div class="brand-title">IQ MIND PRO</div>
         <div class="brand-sub">ඔබේ PRO ලෝකයට සාදරයෙන් පිළිගනිමු!</div>
     </div>
 
-    <!-- Welcome -->
-    <div class="welcome-badge">
-        ඔබ සාර්ථකව ලොග්වී ඇත!
+    <!-- Welcome + Subscription Timer -->
+    <div class="welcome-badge" id="subClock">
+        <i class="fas fa-spinner fa-spin"></i> සබ්ස්ක්රිප්ෂන් තොරතුරු පූරණය වෙමින්...
     </div>
 
     <!-- Main Buttons -->
@@ -483,7 +518,7 @@
             </div>
             <div class="btn-text">
                 <span class="btn-title">GRADE 5 UNLIMITED QUIZ</span>
-                <span class="btn-desc">ප්‍රශ්න 500+ · සිංහල · ගණිතය · සා.දැ.</span>
+                <span class="btn-desc">ප්රශ්න 500+ · සිංහල · ගණිතය · සා.දැ.</span>
             </div>
             <i class="fas fa-chevron-right btn-arrow"></i>
         </a>
@@ -520,11 +555,16 @@
 
     <!-- Facebook Follow -->
     <div class="social-section">
-        <a href="https://web.facebook.com/iqmind.lk" target="_blank" class="fb-follow-btn">
+        <a href="https://web.https://facebook.com/iqmind.lk" target="_blank" class="fb-follow-btn">
             <i class="fab fa-facebook"></i>
             IQ MIND Follow කරන්න
             <span class="follow-badge">FOLLOW</span>
         </a>
+
+        <!-- අලුත් රතු Logout Button එක -->
+        <button class="logout-btn-bottom" onclick="manualLogout()">
+            <i class="fas fa-sign-out-alt"></i> ගිණුමෙන් ඉවත් වන්න
+        </button>
     </div>
 
     <!-- Footer -->
