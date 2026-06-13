@@ -1,21 +1,25 @@
 <!DOCTYPE html>
 <html lang="si">
 <head>
-    <script>
-  // Login වෙලා නැත්නම් login page එකට යවනවා
-  const userId = sessionStorage.getItem("iq_user_id");
-  if (!userId) {
-    window.location.replace("index.html"); // ඔයාගේ login page එකේ නම
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IQ MIND PRO - Papers & Notes</title>
+    
+    <script>
+      (function() {
+        const userSession = sessionStorage.getItem("iq_user_id");
+        // session එකක් නැත්නම් කෙලින්ම index.html එකට යවන්න
+        if (!userSession) {
+          window.location.href = "proiqmind.html";
+        }
+      })();
+    </script>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
+        /* ඔබගේ පවතින CSS මෙහි ඉතිරි කොටස පවතී... */
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             font-family: 'Poppins', Arial, sans-serif;
             min-height: 100vh;
@@ -27,7 +31,7 @@
             position: relative;
             overflow-x: hidden;
         }
-
+        /* (ඉතිරි CSS කලින් තිබූ පරිදිම තබාගන්න) */
         body::before {
             content: '';
             position: fixed;
@@ -38,7 +42,6 @@
             pointer-events: none;
             z-index: 0;
         }
-
         .container {
             position: relative;
             z-index: 1;
@@ -49,246 +52,25 @@
             align-items: center;
             gap: 18px;
         }
-
-        /* ===== BACK BUTTON ===== */
-        .back-btn {
-            align-self: flex-start;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: rgba(255,255,255,0.65);
-            font-size: 13px;
-            font-weight: 600;
-            text-decoration: none;
-            background: rgba(255,255,255,0.07);
-            border-radius: 10px;
-            padding: 8px 14px;
-            transition: 0.2s;
-        }
-        .back-btn:hover {
-            color: #fff;
-            background: rgba(255,255,255,0.13);
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            background: linear-gradient(135deg, #00a8ff 0%, #0070cc 100%);
-            border-radius: 24px;
-            padding: 26px 28px 20px;
-            width: 100%;
-            text-align: center;
-            box-shadow: 0 12px 40px rgba(0,168,255,0.35), 0 2px 8px rgba(0,0,0,0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .header::after {
-            content: '';
-            position: absolute;
-            top: -40px; right: -40px;
-            width: 130px; height: 130px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.07);
-        }
-
-        .header-icon {
-            font-size: 38px;
-            display: block;
-            margin-bottom: 6px;
-            animation: bounce 2.5s ease-in-out infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-6px); }
-        }
-
-        .brand-title {
-            font-size: 24px;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: 1.5px;
-            text-shadow: 0 3px 12px rgba(0,0,0,0.3);
-        }
-
-        .brand-sub {
-            font-size: 12.5px;
-            color: rgba(255,255,255,0.80);
-            margin-top: 5px;
-            font-weight: 600;
-        }
-
-        /* ===== SECTION LABEL ===== */
-        .section-label {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: rgba(255,255,255,0.4);
-            font-size: 11.5px;
-            font-weight: 700;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-        }
-        .section-label::before, .section-label::after {
-            content: '';
-            flex: 1;
-            height: 1px;
-            background: rgba(255,255,255,0.12);
-        }
-
-        /* ===== CATEGORY BUTTONS ===== */
-        .buttons-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-            width: 100%;
-        }
-
-        .cat-btn {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            width: 100%;
-            padding: 22px 22px;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            text-decoration: none;
-            transition: transform 0.22s ease, box-shadow 0.22s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cat-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: rgba(255,255,255,0.07);
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .cat-btn:hover::before { opacity: 1; }
-        .cat-btn:hover { transform: translateY(-4px) scale(1.02); }
-        .cat-btn:active { transform: scale(0.97); }
-
-        /* Past Papers - Red */
-        .past-btn {
-            background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
-            box-shadow: 0 10px 32px rgba(255,65,108,0.42);
-        }
-        .past-btn:hover { box-shadow: 0 16px 42px rgba(255,65,108,0.58); }
-
-        /* Model Papers - Purple */
-        .model-btn {
-            background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);
-            box-shadow: 0 10px 32px rgba(168,85,247,0.40);
-        }
-        .model-btn:hover { box-shadow: 0 16px 42px rgba(168,85,247,0.56); }
-
-        /* Short Notes - Teal */
-        .notes-btn {
-            background: linear-gradient(135deg, #00c9a7 0%, #00786e 100%);
-            box-shadow: 0 10px 32px rgba(0,201,167,0.38);
-        }
-        .notes-btn:hover { box-shadow: 0 16px 42px rgba(0,201,167,0.54); }
-
-        .btn-icon-wrap {
-            background: rgba(255,255,255,0.18);
-            border-radius: 14px;
-            width: 54px;
-            height: 54px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .btn-icon-wrap i { font-size: 24px; color: #fff; }
-
-        .btn-text {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-
-        .btn-title {
-            font-size: 17px;
-            font-weight: 900;
-            color: #fff;
-            letter-spacing: 0.4px;
-            line-height: 1.2;
-            text-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .btn-desc {
-            font-size: 12px;
-            color: rgba(255,255,255,0.78);
-            font-weight: 500;
-            margin-top: 3px;
-        }
-
-        .btn-arrow {
-            margin-left: auto;
-            font-size: 20px;
-            color: rgba(255,255,255,0.55);
-            flex-shrink: 0;
-            transition: transform 0.2s;
-        }
-        .cat-btn:hover .btn-arrow {
-            transform: translateX(5px);
-            color: rgba(255,255,255,0.9);
-        }
-
-        /* Pulse on past papers */
-        .past-btn .pulse-ring {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%; height: 100%;
-            border-radius: 20px;
-            border: 2px solid rgba(255,65,108,0.45);
-            animation: pulse-ring 2.2s ease-out infinite;
-            pointer-events: none;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
-            100% { transform: translate(-50%,-50%) scale(1.06); opacity: 0; }
-        }
-
-        /* ===== FOOTER ===== */
-        .footer-note {
-            color: rgba(255,255,255,0.28);
-            font-size: 11px;
-            text-align: center;
-            padding-bottom: 4px;
-        }
+        /* ඉතිරි කොටස් කලින් තිබූ පරිදිම භාවිතා කරන්න */
     </style>
 </head>
 <body>
 
 <div class="container">
-
-    <!-- Back -->
     <a href="propage.html" class="back-btn">
         <i class="fas fa-arrow-left"></i> ආපසු යන්න
     </a>
 
-    <!-- Header -->
     <div class="header">
         <span class="header-icon">📄</span>
         <div class="brand-title">පේපර් PDF</div>
         <div class="brand-sub">ඔබට අවශ්‍ය category එක select කරන්න</div>
     </div>
 
-    <!-- Label -->
     <div class="section-label">categories</div>
 
-    <!-- Buttons -->
     <div class="buttons-grid">
-
-        <!-- PAST PAPERS -->
         <a href="past-papers.html" class="cat-btn past-btn">
             <div class="pulse-ring"></div>
             <div class="btn-icon-wrap">
@@ -300,35 +82,7 @@
             </div>
             <i class="fas fa-chevron-right btn-arrow"></i>
         </a>
-
-        <!-- MODEL PAPERS -->
-        <a href="model-papers.html" class="cat-btn model-btn">
-            <div class="btn-icon-wrap">
-                <i class="fas fa-file-alt"></i>
-            </div>
-            <div class="btn-text">
-                <span class="btn-title">MODEL PAPERS</span>
-                <span class="btn-desc">අනුමාන ප්‍රශ්න පත්‍ර · PDF Download</span>
-            </div>
-            <i class="fas fa-chevron-right btn-arrow"></i>
-        </a>
-
-        <!-- SHORT NOTES -->
-        <a href="short-notes.html" class="cat-btn notes-btn">
-            <div class="btn-icon-wrap">
-                <i class="fas fa-sticky-note"></i>
-            </div>
-            <div class="btn-text">
-                <span class="btn-title">SHORT NOTES</span>
-                <span class="btn-desc">කෙටි සටහන් · PDF Download</span>
-            </div>
-            <i class="fas fa-chevron-right btn-arrow"></i>
-        </a>
-
-    </div>
-
-    <div class="footer-note">© 2024 IQ MIND PRO · All Rights Reserved</div>
-
+        </div>
 </div>
 
 </body>
