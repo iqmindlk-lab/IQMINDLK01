@@ -89,7 +89,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             font-family: 'Poppins', Arial, sans-serif;
             min-height: 100vh;
@@ -101,7 +100,6 @@
             position: relative;
             overflow-x: hidden;
         }
-
         body::before {
             content: '';
             position: fixed;
@@ -112,7 +110,6 @@
             pointer-events: none;
             z-index: 0;
         }
-
         .container {
             position: relative;
             z-index: 1;
@@ -123,7 +120,6 @@
             align-items: center;
             gap: 16px;
         }
-
         .back-btn {
             align-self: flex-start;
             display: flex;
@@ -139,7 +135,6 @@
             transition: 0.2s;
         }
         .back-btn:hover { color: #fff; background: rgba(255,255,255,0.13); }
-
         .header {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             border-radius: 24px;
@@ -181,7 +176,6 @@
             margin-top: 5px;
             font-weight: 600;
         }
-
         .section-label {
             width: 100%;
             display: flex;
@@ -199,15 +193,12 @@
             height: 1px;
             background: rgba(255,255,255,0.12);
         }
-
-        /* ===== PAPER CARD ===== */
         .papers-list {
             display: flex;
             flex-direction: column;
             gap: 14px;
             width: 100%;
         }
-
         .paper-card {
             width: 100%;
             background: rgba(255,255,255,0.05);
@@ -220,15 +211,12 @@
             transform: translateY(-2px);
             box-shadow: 0 10px 32px rgba(0,0,0,0.35);
         }
-
-        /* Top row: year badge + name */
         .card-top {
             display: flex;
             align-items: center;
             gap: 14px;
             padding: 16px 18px 14px;
         }
-
         .year-badge {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             border-radius: 12px;
@@ -255,7 +243,6 @@
             margin-top: 2px;
             text-transform: uppercase;
         }
-
         .paper-info {
             flex: 1;
             display: flex;
@@ -273,14 +260,11 @@
             color: rgba(255,255,255,0.45);
             font-weight: 500;
         }
-
-        /* Bottom row: two download buttons */
         .card-btns {
             display: flex;
             gap: 10px;
             padding: 0 16px 16px;
         }
-
         .download-btn {
             flex: 1;
             display: flex;
@@ -297,23 +281,18 @@
         }
         .download-btn:active { transform: scale(0.97); }
         .download-btn i { font-size: 12px; }
-
-        /* Paper PDF button - red */
         .btn-paper {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             color: #fff;
             box-shadow: 0 4px 14px rgba(255,65,108,0.38);
         }
         .btn-paper:hover { box-shadow: 0 6px 22px rgba(255,65,108,0.56); transform: scale(1.03); }
-
-        /* Marking Scheme button - amber/gold */
         .btn-marking {
             background: linear-gradient(135deg, #f7b733 0%, #e08900 100%);
             color: #fff;
             box-shadow: 0 4px 14px rgba(247,183,51,0.35);
         }
         .btn-marking:hover { box-shadow: 0 6px 22px rgba(247,183,51,0.52); transform: scale(1.03); }
-
         .footer-note {
             color: rgba(255,255,255,0.28);
             font-size: 11px;
@@ -353,10 +332,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2018" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2018-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2018" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2018-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -375,10 +354,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2019" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2019-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2019" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2019-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -397,10 +376,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2020" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2020-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2020" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2020-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -419,10 +398,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2021" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2021-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2021" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2021-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -441,10 +420,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2022" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2022-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2022" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2022-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -463,10 +442,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2023" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2023-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2023" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2023-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -485,10 +464,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="YOUR_PDF_LINK_2024" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2024-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2024" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2024-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
@@ -507,10 +486,10 @@
                 </div>
             </div>
             <div class="card-btns">
-                <a href="2025-paper.pdf" class="download-btn btn-paper" target="_blank" download>
+                <a href="papers/2025-paper.pdf" class="download-btn btn-paper" target="_blank">
                     <i class="fas fa-download"></i> Paper Download
                 </a>
-                <a href="YOUR_MARKING_LINK_2025" class="download-btn btn-marking" target="_blank" download>
+                <a href="marking/2025-marking.pdf" class="download-btn btn-marking" target="_blank">
                     <i class="fas fa-check-circle"></i> Marking Scheme
                 </a>
             </div>
