@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IQ MIND PRO - IQ බුද්ධි පරික්ශන</title>
+
+        <script>
+      (function() {
+        const userSession = sessionStorage.getItem("iq_user_id");
+        // session එකක් නැත්නම් කෙලින්ම index.html එකට යවන්න
+        if (!userSession) {
+          window.location.href = "proiqmind.html";
+        }
+      })();
+    </script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&family=Noto+Sans+Sinhala:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
