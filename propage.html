@@ -21,7 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* Animated background stars */
         body::before {
             content: '';
             position: fixed;
@@ -176,6 +175,16 @@
             box-shadow: 0 16px 45px rgba(0,200,81,0.55);
         }
 
+        /* IQ Button */
+        .iq-btn {
+            background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);
+            box-shadow: 0 10px 35px rgba(168,85,247,0.45);
+        }
+
+        .iq-btn:hover {
+            box-shadow: 0 16px 45px rgba(168,85,247,0.60);
+        }
+
         .btn-icon-wrap {
             background: rgba(255,255,255,0.18);
             border-radius: 14px;
@@ -315,6 +324,18 @@
             pointer-events: none;
         }
 
+        /* Pulse ring on IQ button */
+        .iq-btn .pulse-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%; height: 100%;
+            border-radius: 20px;
+            border: 2px solid rgba(168,85,247,0.5);
+            animation: pulse-ring 2s ease-out infinite;
+            pointer-events: none;
+        }
+
         @keyframes pulse-ring {
             0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
             100% { transform: translate(-50%,-50%) scale(1.06); opacity: 0; }
@@ -334,7 +355,7 @@
 
     <!-- Welcome -->
     <div class="welcome-badge">
-        ඔබ සාර්ථකව ලොග්වී ඇත! <span>Grade 5 Quiz</span> හෝ <span>Paper PDF</span> select කරන්න.
+        ඔබ සාර්ථකව ලොග්වී ඇත! <span>Grade 5 Quiz</span>, <span>Paper PDF</span> හෝ <span>IQ Test</span> select කරන්න.
     </div>
 
     <!-- Main Buttons -->
@@ -347,7 +368,7 @@
                 <i class="fas fa-brain"></i>
             </div>
             <div class="btn-text">
-                <span class="btn-title">GRADE 5 QUIZ</span>
+                <span class="btn-title">GRADE 5 UNLIMITED QUIZ</span>
                 <span class="btn-desc">ප්‍රශ්න 500+ · සිංහල · ගණිතය · සා.දැ.</span>
             </div>
             <i class="fas fa-chevron-right btn-arrow"></i>
@@ -360,7 +381,21 @@
             </div>
             <div class="btn-text">
                 <span class="btn-title">පේපර් PDF</span>
-                <span class="btn-desc">අනුමාන · පසුගිය විභාග · PDF Download</span>
+                <span class="btn-desc">අනුමාන · පසුගිය විභාග ·කෙටි සටහන්  PDF Download</span>
+            </div>
+            <i class="fas fa-chevron-right btn-arrow"></i>
+        </a>
+
+        <!-- IQ TEST -->
+        <a href="iqpro.html" class="main-btn iq-btn">
+            <div class="pulse-ring"></div>
+            <div class="btn-icon-wrap">
+                <i class="fas fa-lightbulb"></i>
+            </div>
+            <div class="btn-text">
+                <span class="btn-title">IQ UNLIMITED QUIZ</span>
+		<span class="btn-title">(බුද්ධි පරික්ශන)</span>
+                <span class="btn-desc">Intelligence Quotient ඔබේ  IQ මට්ටම බලාගන්න·</span>
             </div>
             <i class="fas fa-chevron-right btn-arrow"></i>
         </a>
