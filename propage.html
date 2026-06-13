@@ -25,7 +25,7 @@
 
       if (!userId) { window.location.href = "proiqmind.html"; }
 
-      // --- සබ්ස්ක්රිප්ෂන් කාලය පෙන්වීමේ කොටස - මාස සහ දින ---
+      // --- සබ්ස්ක්රිප්ෂන් කාලය පෙන්වීමේ කොටස ---
       async function checkSubscription() {
           try {
               const docRef = doc(db, "allowed_users", userId);
@@ -43,14 +43,11 @@
                       const days = totalDaysLeft % 30;
                       
                       let timeText = "";
-                      if (months > 0) {
-                          timeText += `<span>මාස ${months}</span>`;
-                      }
+                      if (months > 0) { timeText += `<span>මාස ${months}</span>`; }
                       if (days > 0) {
                           if (months > 0) timeText += " ";
                           timeText += `<span>දින ${days}</span>`;
                       }
-                      
                       clockField.innerHTML = `<i class="fas fa-clock"></i> PRO ගිණුමේ වලංගු කාලය තව ${timeText} කින් අවසන් වේ.`;
                   } else {
                       clockField.innerHTML = `<i class="fas fa-exclamation-circle"></i> ඔබගේ වලංගු කාලය අවසන් වී ඇත!`;
@@ -60,12 +57,26 @@
       }
       checkSubscription();
 
+      // --- Firebase එකට Heartbeat (පණිවුඩයක්) යැවීම ---
+      // මේ මගින් පරිශීලකයා පිටුවේ සිටින තාක් සෑම විනාඩියකම "මම ඉන්නවා" කියා වේලාව සටහන් කරයි.
+      async function updateHeartbeat() {
+          if (userId) {
+              try {
+                  const docRef = doc(db, "allowed_users", userId);
+                  await updateDoc(docRef, { last_active: new Date() });
+              } catch (e) { console.error("Heartbeat Error:", e); }
+          }
+      }
+      updateHeartbeat(); // පිටුවට ආපු ගමන් මුලින්ම update කරයි.
+
       // --- මැනුවල් ලොග් අවුට් වීමේ ක්රියාවලිය ---
       async function manualLogout() {
           if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්යද?")) {
               try {
                   const docRef = doc(db, "allowed_users", userId);
-                  await updateDoc(docRef, { is_logged_in: false });
+                  // ලොග් අවුට් වෙනකොට last_active එක බොහෝ පැරණි දිනයකට දමයි (උදා: වසර 2000 ට).
+                  // එවිට වෙනත් උපාංගයකට ක්ෂණිකව ලොග් විය හැක.
+                  await updateDoc(docRef, { last_active: new Date("2000-01-01") });
                   localStorage.removeItem("iq_user_id");
                   window.location.href = "proiqmind.html";
               } catch (error) {
@@ -74,10 +85,9 @@
               }
           }
       }
-      // HTML බටන් එකට සම්බන්ධ කිරීම සඳහා window object එකට එකතු කිරීම
       window.manualLogout = manualLogout;
 
-      // විනාඩි 5ක අක්රියතා ටයිමරය
+      // විනාඩි 5ක අක්රියතා ටයිමරය (User එක තැනක හිටියොත්)
       let idleTime = 0;
       function resetIdleTime() { idleTime = 0; }
       document.onmousemove = resetIdleTime;
@@ -87,17 +97,18 @@
           idleTime++;
           if (idleTime > 5) {
               alert("ඔබ විනාඩි 5ක් අක්රියව සිටි නිසා ලොග් අවුට් විය.");
-              const docRef = doc(db, "allowed_users", userId);
-              await updateDoc(docRef, { is_logged_in: false });
-              localStorage.removeItem("iq_user_id");
-              window.location.href = "proiqmind.html";
+              manualLogout(); // කලින් ලියපු ලොග් අවුට් ශ්‍රිතයම ක්‍රියාත්මක කරයි.
+          } else {
+              // පරිශීලකයා ක්‍රියාකාරීව සිටී නම් සෑම විනාඩියකටම Firebase එකේ වේලාව අලුත් කරයි.
+              updateHeartbeat();
           }
       }, 60000);
 
-      window.addEventListener("beforeunload", async () => {
+      // බ්‍රවුසර් ටැබ් එක වහනකොට උපරිම උත්සාහයක් ගන්නවා වේලාව පරණ කරන්න
+      window.addEventListener("beforeunload", () => {
           if(userId) {
               const docRef = doc(db, "allowed_users", userId);
-              await updateDoc(docRef, { is_logged_in: false });
+              updateDoc(docRef, { last_active: new Date("2000-01-01") });
           }
       });
     </script>
@@ -106,7 +117,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
-
         body {
             font-family: 'Poppins', Arial, sans-serif;
             min-height: 100vh;
@@ -118,7 +128,6 @@
             position: relative;
             overflow-x: hidden;
         }
-
         body::before {
             content: '';
             position: fixed;
@@ -129,8 +138,6 @@
             pointer-events: none;
             z-index: 0;
         }              
-
-        /* Logout Button Style */
         .logout-btn-top {
             position: absolute;
             top: 15px;
@@ -156,8 +163,6 @@
             box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
             transform: translateY(-2px);
         }
-
-        /* අලුත් Logout Button - Follow button එකට යටින් */
         .logout-btn-bottom {
             display: flex;
             align-items: center;
@@ -183,7 +188,6 @@
             box-shadow: 0 10px 30px rgba(255,65,108,0.60);
         }
         .logout-btn-bottom i { font-size: 18px; }
-
         .container {
             position: relative;
             z-index: 1;
@@ -194,8 +198,6 @@
             align-items: center;
             gap: 20px;
         }
-
-        /* ===== HEADER / LOGO ===== */
         .header {
             background: linear-gradient(135deg, #00a8ff 0%, #0070cc 100%);
             border-radius: 24px;
@@ -206,7 +208,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .header::after {
             content: '';
             position: absolute;
@@ -215,19 +216,16 @@
             border-radius: 50%;
             background: rgba(255,255,255,0.07);
         }
-
         .crown-icon {
             font-size: 40px;
             display: block;
             margin-bottom: 6px;
             animation: bounce 2.5s ease-in-out infinite;
         }
-
         @keyframes bounce {
             0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-6px); }
         }
-
         .brand-title {
             font-size: 28px;
             font-weight: 900;
@@ -236,7 +234,6 @@
             text-shadow: 0 3px 12px rgba(0,0,0,0.3);
             line-height: 1;
         }
-
         .brand-sub {
             font-size: 13px;
             color: rgba(255,255,255,0.80);
@@ -244,8 +241,6 @@
             font-weight: 600;
             letter-spacing: 0.5px;
         }
-
-        /* ===== WELCOME BADGE ===== */
         .welcome-badge {
             background: rgba(0,168,255,0.12);
             border: 1.5px solid rgba(0,168,255,0.35);
@@ -258,20 +253,16 @@
             font-weight: 500;
             line-height: 1.6;
         }
-
         .welcome-badge span {
             color: #00d4ff;
             font-weight: 700;
         }
-
-        /* ===== MAIN BUTTONS ===== */
         .buttons-grid {
             display: flex;
             flex-direction: column;
             gap: 16px;
             width: 100%;
         }
-
         .main-btn {
             display: flex;
             align-items: center;
@@ -287,7 +278,6 @@
             position: relative;
             overflow: hidden;
         }
-
         .main-btn::before {
             content: '';
             position: absolute;
@@ -296,47 +286,24 @@
             opacity: 0;
             transition: opacity 0.2s;
         }
-
         .main-btn:hover::before { opacity: 1; }
-
-        .main-btn:hover {
-            transform: translateY(-4px) scale(1.02);
-        }
-
-        .main-btn:active {
-            transform: scale(0.98);
-        }
-
-        /* QUIZ Button */
+        .main-btn:hover { transform: translateY(-4px) scale(1.02); }
+        .main-btn:active { transform: scale(0.98); }
         .quiz-btn {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             box-shadow: 0 10px 35px rgba(255,65,108,0.45);
         }
-
-        .quiz-btn:hover {
-            box-shadow: 0 16px 45px rgba(255,65,108,0.60);
-        }
-
-        /* PDF Button */
+        .quiz-btn:hover { box-shadow: 0 16px 45px rgba(255,65,108,0.60); }
         .pdf-btn {
             background: linear-gradient(135deg, #00c851 0%, #007E33 100%);
             box-shadow: 0 10px 35px rgba(0,200,81,0.40);
         }
-
-        .pdf-btn:hover {
-            box-shadow: 0 16px 45px rgba(0,200,81,0.55);
-        }
-
-        /* IQ Button */
+        .pdf-btn:hover { box-shadow: 0 16px 45px rgba(0,200,81,0.55); }
         .iq-btn {
             background: linear-gradient(135deg, #a855f7 0%, #6d28d9 100%);
             box-shadow: 0 10px 35px rgba(168,85,247,0.45);
         }
-
-        .iq-btn:hover {
-            box-shadow: 0 16px 45px rgba(168,85,247,0.60);
-        }
-
+        .iq-btn:hover { box-shadow: 0 16px 45px rgba(168,85,247,0.60); }
         .btn-icon-wrap {
             background: rgba(255,255,255,0.18);
             border-radius: 14px;
@@ -347,18 +314,8 @@
             justify-content: center;
             flex-shrink: 0;
         }
-
-        .btn-icon-wrap i {
-            font-size: 26px;
-            color: #fff;
-        }
-
-        .btn-text {
-            display: flex;
-            flex-direction: column;
-            text-align: left;
-        }
-
+        .btn-icon-wrap i { font-size: 26px; color: #fff; }
+        .btn-text { display: flex; flex-direction: column; text-align: left; }
         .btn-title {
             font-size: 19px;
             font-weight: 900;
@@ -367,14 +324,12 @@
             line-height: 1.2;
             text-shadow: 0 2px 6px rgba(0,0,0,0.2);
         }
-
         .btn-desc {
             font-size: 12px;
             color: rgba(255,255,255,0.80);
             font-weight: 500;
             margin-top: 3px;
         }
-
         .btn-arrow {
             margin-left: auto;
             font-size: 22px;
@@ -382,13 +337,10 @@
             flex-shrink: 0;
             transition: transform 0.2s;
         }
-
         .main-btn:hover .btn-arrow {
             transform: translateX(5px);
             color: rgba(255,255,255,0.9);
         }
-
-        /* ===== DIVIDER ===== */
         .divider {
             display: flex;
             align-items: center;
@@ -399,31 +351,18 @@
             font-weight: 600;
             letter-spacing: 1px;
         }
-
         .divider::before, .divider::after {
             content: '';
             flex: 1;
             height: 1px;
             background: rgba(255,255,255,0.15);
         }
-
-        /* ===== SOCIAL SECTION ===== */
         .social-section {
             width: 100%;
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
-
-        .social-label {
-            text-align: center;
-            color: rgba(255,255,255,0.55);
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-        }
-
         .fb-follow-btn {
             display: flex;
             align-items: center;
@@ -440,14 +379,11 @@
             box-shadow: 0 6px 22px rgba(24,119,242,0.40);
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-
         .fb-follow-btn:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 30px rgba(24,119,242,0.55);
         }
-
         .fb-follow-btn i { font-size: 20px; }
-
         .fb-follow-btn .follow-badge {
             background: rgba(255,255,255,0.2);
             border-radius: 20px;
@@ -455,38 +391,23 @@
             font-size: 11px;
             margin-left: 4px;
         }
-
-        /* ===== FOOTER ===== */
         .footer-note {
             color: rgba(255,255,255,0.30);
             font-size: 11px;
             text-align: center;
             padding-bottom: 4px;
         }
-
-        /* Pulse ring on quiz button */
-        .quiz-btn .pulse-ring {
+        .quiz-btn .pulse-ring, .iq-btn .pulse-ring {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             width: 100%; height: 100%;
             border-radius: 20px;
-            border: 2px solid rgba(255,65,108,0.5);
-            animation: pulse-ring 2s ease-out infinite;
             pointer-events: none;
-        }
-
-        /* Pulse ring on IQ button */
-        .iq-btn .pulse-ring {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%; height: 100%;
-            border-radius: 20px;
-            border: 2px solid rgba(168,85,247,0.5);
             animation: pulse-ring 2s ease-out infinite;
-            pointer-events: none;
         }
+        .quiz-btn .pulse-ring { border: 2px solid rgba(255,65,108,0.5); }
+        .iq-btn .pulse-ring { border: 2px solid rgba(168,85,247,0.5); }
 
         @keyframes pulse-ring {
             0% { transform: translate(-50%,-50%) scale(1); opacity: 0.6; }
@@ -497,80 +418,60 @@
 <body>
     <div class="container">
         <div class="header">           
-<span class="crown-icon">👑</span>
-        <div class="brand-title">IQ MIND PRO</div>
-        <div class="brand-sub">ඔබේ PRO ලෝකයට සාදරයෙන් පිළිගනිමු!</div>
+            <span class="crown-icon">👑</span>
+            <div class="brand-title">IQ MIND PRO</div>
+            <div class="brand-sub">ඔබේ PRO ලෝකයට සාදරයෙන් පිළිගනිමු!</div>
+        </div>
+
+        <div class="welcome-badge" id="subClock">
+            <i class="fas fa-spinner fa-spin"></i> සබ්ස්ක්රිප්ෂන් තොරතුරු පූරණය වෙමින්...
+        </div>
+
+        <div class="buttons-grid">
+            <a href="garde5.html" class="main-btn quiz-btn">
+                <div class="pulse-ring"></div>
+                <div class="btn-icon-wrap"><i class="fas fa-brain"></i></div>
+                <div class="btn-text">
+                    <span class="btn-title">GRADE 5 UNLIMITED QUIZ</span>
+                    <span class="btn-desc">ප්රශ්න 500+ · සිංහල · ගණිතය · සා.දැ.</span>
+                </div>
+                <i class="fas fa-chevron-right btn-arrow"></i>
+            </a>
+
+            <a href="pdf.html" class="main-btn pdf-btn">
+                <div class="btn-icon-wrap"><i class="fas fa-file-pdf"></i></div>
+                <div class="btn-text">
+                    <span class="btn-title">පේපර් PDF</span>
+                    <span class="btn-desc">අනුමාන · පසුගිය විභාග ·කෙටි සටහන්  PDF Download</span>
+                </div>
+                <i class="fas fa-chevron-right btn-arrow"></i>
+            </a>
+
+            <a href="iqproquiz.html" class="main-btn iq-btn">
+                <div class="pulse-ring"></div>
+                <div class="btn-icon-wrap"><i class="fas fa-lightbulb"></i></div>
+                <div class="btn-text">
+                    <span class="btn-title">IQ UNLIMITED QUIZ</span>
+                    <span class="btn-title">(බුද්ධි පරික්ශන)</span>
+                    <span class="btn-desc">Intelligence Quotient ඔබේ  IQ මට්ටම බලාගන්න·</span>
+                </div>
+                <i class="fas fa-chevron-right btn-arrow"></i>
+            </a>
+       </div>
+
+        <div class="divider">FOLLOW US</div>
+
+        <div class="social-section">
+            <a href="https://facebook.com/iqmind.lk" target="_blank" class="fb-follow-btn">
+                <i class="fab fa-facebook"></i> IQ MIND Follow කරන්න <span class="follow-badge">FOLLOW</span>
+            </a>
+
+            <button class="logout-btn-bottom" onclick="manualLogout()">
+                <i class="fas fa-sign-out-alt"></i> ගිණුමෙන් ඉවත් වන්න
+            </button>
+        </div>
+
+        <div class="footer-note">© 2026 IQ MIND PRO · All Rights Reserved</div>
     </div>
-
-    <!-- Welcome + Subscription Timer -->
-    <div class="welcome-badge" id="subClock">
-        <i class="fas fa-spinner fa-spin"></i> සබ්ස්ක්රිප්ෂන් තොරතුරු පූරණය වෙමින්...
-    </div>
-
-    <!-- Main Buttons -->
-    <div class="buttons-grid">
-
-        <!-- GRADE 5 QUIZ -->
-        <a href="garde5.html" class="main-btn quiz-btn">
-            <div class="pulse-ring"></div>
-            <div class="btn-icon-wrap">
-                <i class="fas fa-brain"></i>
-            </div>
-            <div class="btn-text">
-                <span class="btn-title">GRADE 5 UNLIMITED QUIZ</span>
-                <span class="btn-desc">ප්රශ්න 500+ · සිංහල · ගණිතය · සා.දැ.</span>
-            </div>
-            <i class="fas fa-chevron-right btn-arrow"></i>
-        </a>
-
-        <!-- PAPER PDF -->
-        <a href="pdf.html" class="main-btn pdf-btn">
-            <div class="btn-icon-wrap">
-                <i class="fas fa-file-pdf"></i>
-            </div>
-            <div class="btn-text">
-                <span class="btn-title">පේපර් PDF</span>
-                <span class="btn-desc">අනුමාන · පසුගිය විභාග ·කෙටි සටහන්  PDF Download</span>
-            </div>
-            <i class="fas fa-chevron-right btn-arrow"></i>
-        </a>
-
-        <!-- IQ TEST -->
-        <a href="iqproquiz.html" class="main-btn iq-btn">
-            <div class="pulse-ring"></div>
-            <div class="btn-icon-wrap">
-                <i class="fas fa-lightbulb"></i>
-            </div>
-            <div class="btn-text">
-                <span class="btn-title">IQ UNLIMITED QUIZ</span>
-		<span class="btn-title">(බුද්ධි පරික්ශන)</span>
-                <span class="btn-desc">Intelligence Quotient ඔබේ  IQ මට්ටම බලාගන්න·</span>
-            </div>
-            <i class="fas fa-chevron-right btn-arrow"></i>
-        </a>
-   </div>
-
-    <!-- Divider -->
-    <div class="divider">FOLLOW US</div>
-
-    <!-- Facebook Follow -->
-    <div class="social-section">
-        <a href="https://web.https://facebook.com/iqmind.lk" target="_blank" class="fb-follow-btn">
-            <i class="fab fa-facebook"></i>
-            IQ MIND Follow කරන්න
-            <span class="follow-badge">FOLLOW</span>
-        </a>
-
-        <!-- අලුත් රතු Logout Button එක -->
-        <button class="logout-btn-bottom" onclick="manualLogout()">
-            <i class="fas fa-sign-out-alt"></i> ගිණුමෙන් ඉවත් වන්න
-        </button>
-    </div>
-
-    <!-- Footer -->
-    <div class="footer-note">© 2024 IQ MIND PRO · All Rights Reserved</div>
-
-</div>
-
 </body>
 </html>
