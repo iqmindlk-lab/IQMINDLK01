@@ -23,7 +23,7 @@
       const db = getFirestore(app);
       const userId = localStorage.getItem("iq_user_id");
 
-      if (!userId) { window.location.href = "index.html"; }
+      if (!userId) { window.location.href = "proiqmind.html"; }
 
       // --- සබ්ස්ක්‍රිප්ෂන් කාලය පෙන්වීමේ කොටස ---
       async function checkSubscription() {
@@ -55,7 +55,7 @@
                   const docRef = doc(db, "allowed_users", userId);
                   await updateDoc(docRef, { is_logged_in: false });
                   localStorage.removeItem("iq_user_id");
-                  window.location.href = "index.html";
+                  window.location.href = "proiqmind.html";
               } catch (error) {
                   console.error("Logout Error:", error);
                   alert("Logout වීමේදී දෝෂයක් ඇති විය. නැවත උත්සාහ කරන්න.");
@@ -78,7 +78,7 @@
               const docRef = doc(db, "allowed_users", userId);
               await updateDoc(docRef, { is_logged_in: false });
               localStorage.removeItem("iq_user_id");
-              window.location.href = "index.html";
+              window.location.href = "proiqmind.html";
           }
       }, 60000);
 
