@@ -117,6 +117,33 @@
             pointer-events: none;
             z-index: 0;
         }
+
+                /* Logout Button Style */
+        .logout-btn-top {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 65, 108, 0.2);
+            border: 1px solid rgba(255, 65, 108, 0.4);
+            color: #ff4b2b;
+            padding: 8px 14px;
+            border-radius: 10px;
+            font-size: 11.5px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .logout-btn-top:hover {
+            background: #ff4b2b;
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4);
+            transform: translateY(-2px);
+        }
         .container {
             position: relative;
             z-index: 1;
@@ -133,6 +160,12 @@
 <body>
 
 <div class="container">
+
+        <div class="header">
+            <button class="logout-btn-top" onclick="manualLogout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+    
     <a href="propage.html" class="back-btn">
         <i class="fas fa-arrow-left"></i> ආපසු යන්න
     </a>
