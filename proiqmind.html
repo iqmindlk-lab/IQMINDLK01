@@ -7,7 +7,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         body { font-family: 'Poppins', Arial, sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background-color: #06031f; color: white; margin: 0; padding: 20px; }
-        body::before { content: ''; position: fixed; inset: 0; background: radial-gradient(ellipse at 20% 30%, rgba(0,168,255,0.12) 0%, transparent 55%), radial-gradient(ellipse at 80% 70%, rgba(255,65,108,0.10) 0%, transparent 55%); pointer-events: none; z-index: 0; }
         .container { text-align: center; background: #00a8ff; padding: 30px; border-radius: 25px; box-shadow: 0 15px 30px rgba(0,0,0,0.4); width: 100%; max-width: 380px; }
         .promo-banner { background: linear-gradient(45deg, #ff416c, #ff4b2b); border-radius: 18px; padding: 16px 14px; margin-bottom: 18px; text-align: justify; box-shadow: 0 6px 20px rgba(255,65,108,0.45); }
         .promo-brand { font-size: 22px; font-weight: 900; letter-spacing: 1px; color: #fff; text-align: center; display: block; margin-bottom: 10px; }
@@ -70,26 +69,29 @@
 
           if (docSnap.exists()) {
               const data = docSnap.data();
-              const today = new Date();
-              const expiry = data.expiry_date.toDate();
-
-              if (today > expiry) {
+              const now = new Date();
+              
+              // 1. කාලය පරීක්ෂා කිරීම (Expiry Date)
+              if (data.expiry_date.toDate() < now) {
                   errorField.innerText = "ඔබගේ ගිණුම කල් ඉකුත් වී ඇත!"; errorField.style.display = "block";
                   return;
               }
 
-              let myDeviceId = localStorage.getItem("iq_device_id");
-              if (!myDeviceId) {
-                  myDeviceId = Math.random().toString(36).substring(2) + Date.now().toString(36);
-                  localStorage.setItem("iq_device_id", myDeviceId);
+              // 2. උපාංගය භාවිතා කිරීම පරීක්ෂා කිරීම (Timestamp ක්‍රමය)
+              if (data.last_active) {
+                  const lastActive = data.last_active.toDate();
+                  const diffInMinutes = (now.getTime() - lastActive.getTime()) / (1000 * 60);
+
+                  // විනාඩි 5කට වඩා අඩු කාලයකට පෙර ක්‍රියාකාරී වී ඇත්නම් එය තවමත් ලොග් වී සිටින බවයි
+                  if (diffInMinutes < 5) {
+                      errorField.innerText = "මෙම ගිණුම දැනටමත් වෙනත් උපාංගයක භාවිතයේ පවතී! (විනාඩි 5කින් නැවත උත්සාහ කරන්න)";
+                      errorField.style.display = "block";
+                      return;
+                  }
               }
 
-              if (data.is_logged_in === true && data.current_device_id !== myDeviceId) {
-                  errorField.innerText = "මෙම ගිණුම දැනටමත් වෙනත් උපාංගයක භාවිතයේ පවතී!"; errorField.style.display = "block";
-                  return;
-              }
-
-              await updateDoc(docRef, { is_logged_in: true, current_device_id: myDeviceId });
+              // සියල්ල හරි නම්, අවසර ලබා දී Dashboard වෙත යවන්න
+              await updateDoc(docRef, { last_active: new Date() });
               localStorage.setItem("iq_user_id", typedId);
               window.location.href = "propage.html"; 
           } else {
