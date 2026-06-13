@@ -5,35 +5,90 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>IQ MIND PRO - Papers & Notes</title>
     
-<script type="module">
-  import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-  // (initializeApp සහ db අර්ථ දැක්වීම මෙහි කරන්න)
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+      import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const userId = localStorage.getItem("iq_user_id");
-  const db = getFirestore(); // db එක කලින් initialize කර ඇත්නම් මෙය භාවිතා කරන්න
+      const firebaseConfig = {
+        apiKey: "AIzaSyBHgRwGTk_YF11byElDa5dH_GkODzuE2JY",
+        authDomain: "iq-pro-8661d.firebaseapp.com",
+        projectId: "iq-pro-8661d",
+        storageBucket: "iq-pro-8661d.firebasestorage.app",
+        messagingSenderId: "825067863061",
+        appId: "1:825067863061:web:9100baf84c85e2984e221c",
+        measurementId: "G-HSL89D29GR"
+      };
 
-  // 1. විනාඩි 5ක අක්‍රියතා ටයිමරය (Auto-Logout)
-  let idleTime = 0;
-  function resetIdleTime() { idleTime = 0; }
-  document.onmousemove = resetIdleTime;
-  document.onkeypress = resetIdleTime;
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const userId = localStorage.getItem("iq_user_id");
 
-  setInterval(async () => {
-      idleTime++;
-      if (idleTime > 5) { // විනාඩි 5ක්
-          alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ලොග් අවුට් විය.");
-          const docRef = doc(db, "allowed_users", userId);
-          await updateDoc(docRef, { is_logged_in: false });
-          window.location.href = "index.html";
+      if (!userId) { window.location.href = "proiqmind.html"; }
+
+      // --- සබ්ස්ක්‍රිප්ෂන් කාලය පෙන්වීමේ කොටස ---
+      async function checkSubscription() {
+          try {
+              const docRef = doc(db, "allowed_users", userId);
+              const docSnap = await getDoc(docRef);
+              if (docSnap.exists()) {
+                  const data = docSnap.data();
+                  const expiryDate = data.expiry_date.toDate();
+                  const today = new Date();
+                  const timeDiff = expiryDate.getTime() - today.getTime();
+                  const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                  
+                  const clockField = document.getElementById("subClock");
+                  if (daysLeft > 0) {
+                      clockField.innerHTML = `<i class="fas fa-clock"></i> PRO ගිණුමේ වලංගු කාලය තව දින <span>${daysLeft} කින්</span> අවසන් වේ.`;
+                  } else {
+                      clockField.innerHTML = `<i class="fas fa-exclamation-circle"></i> ඔබගේ වලංගු කාලය අවසන් වී ඇත!`;
+                  }
+              }
+          } catch (error) { console.error("Error:", error); }
       }
-  }, 60000); // සෑම මිනිත්තුවකට වරක් පරීක්ෂා කරයි
+      checkSubscription();
 
-  // 2. පිටුවෙන් ඉවත් වන විට Logout කිරීම
-  window.addEventListener("beforeunload", async () => {
-      const docRef = doc(db, "allowed_users", userId);
-      await updateDoc(docRef, { is_logged_in: false });
-  });
-</script>
+      // --- මැනුවල් ලොග් අවුට් වීමේ ක්‍රියාවලිය ---
+      async function manualLogout() {
+          if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්‍යද?")) {
+              try {
+                  const docRef = doc(db, "allowed_users", userId);
+                  await updateDoc(docRef, { is_logged_in: false });
+                  localStorage.removeItem("iq_user_id");
+                  window.location.href = "proiqmind.html";
+              } catch (error) {
+                  console.error("Logout Error:", error);
+                  alert("Logout වීමේදී දෝෂයක් ඇති විය. නැවත උත්සාහ කරන්න.");
+              }
+          }
+      }
+      // HTML බටන් එකට සම්බන්ධ කිරීම සඳහා window object එකට එකතු කිරීම
+      window.manualLogout = manualLogout;
+
+      // විනාඩි 5ක අක්‍රියතා ටයිමරය
+      let idleTime = 0;
+      function resetIdleTime() { idleTime = 0; }
+      document.onmousemove = resetIdleTime;
+      document.onkeypress = resetIdleTime;
+
+      setInterval(async () => {
+          idleTime++;
+          if (idleTime > 5) {
+              alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ලොග් අවුට් විය.");
+              const docRef = doc(db, "allowed_users", userId);
+              await updateDoc(docRef, { is_logged_in: false });
+              localStorage.removeItem("iq_user_id");
+              window.location.href = "proiqmind.html";
+          }
+      }, 60000);
+
+      window.addEventListener("beforeunload", async () => {
+          if(userId) {
+              const docRef = doc(db, "allowed_users", userId);
+              await updateDoc(docRef, { is_logged_in: false });
+          }
+      });
+    </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;900&display=swap" rel="stylesheet">
