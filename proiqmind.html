@@ -83,7 +83,7 @@
                   const diffInMinutes = (now.getTime() - lastActive.getTime()) / (1000 * 60);
 
                   // විනාඩි 5කට වඩා අඩු කාලයකට පෙර ක්‍රියාකාරී වී ඇත්නම් එය තවමත් ලොග් වී සිටින බවයි
-                  if (diffInMinutes < 5) {
+                  if (diffInMinutes < 1) {
                       errorField.innerText = "මෙම ගිණුම දැනටමත් වෙනත් උපාංගයක භාවිතයේ පවතී! (විනාඩි 5කින් නැවත උත්සාහ කරන්න)";
                       errorField.style.display = "block";
                       return;
