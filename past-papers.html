@@ -7,7 +7,7 @@
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-      import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+      import { getFirestore, doc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyBHgRwGTk_YF11byElDa5dH_GkODzuE2JY",
@@ -23,66 +23,42 @@
       const db = getFirestore(app);
       const userId = localStorage.getItem("iq_user_id");
 
+      // ලොගින් නොකර access කරන්නේ නැහැ
       if (!userId) { window.location.href = "proiqmind.html"; }
 
-      async function checkSubscription() {
-          try {
-              const docRef = doc(db, "allowed_users", userId);
-              const docSnap = await getDoc(docRef);
-              if (docSnap.exists()) {
-                  const data = docSnap.data();
-                  const expiryDate = data.expiry_date.toDate();
-                  const today = new Date();
-                  const timeDiff = expiryDate.getTime() - today.getTime();
-                  const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                  const clockField = document.getElementById("subClock");
-                  if (daysLeft > 0) {
-                      clockField.innerHTML = `<i class="fas fa-clock"></i> PRO ගිණුමේ වලංගු කාලය තව දින <span>${daysLeft} කින්</span> අවසන් වේ.`;
-                  } else {
-                      clockField.innerHTML = `<i class="fas fa-exclamation-circle"></i> ඔබගේ වලංගු කාලය අවසන් වී ඇත!`;
-                  }
-              }
-          } catch (error) { console.error("Error:", error); }
-      }
-      checkSubscription();
-
-      async function manualLogout() {
-          if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්‍යද?")) {
-              try {
-                  const docRef = doc(db, "allowed_users", userId);
-                  await updateDoc(docRef, { is_logged_in: false });
-                  localStorage.removeItem("iq_user_id");
-                  window.location.href = "proiqmind.html";
-              } catch (error) {
-                  console.error("Logout Error:", error);
-                  alert("Logout වීමේදී දෝෂයක් ඇති විය. නැවත උත්සාහ කරන්න.");
-              }
-          }
-      }
-      window.manualLogout = manualLogout;
-
+      // ===== විනාඩි 5 Idle Auto Logout =====
       let idleTime = 0;
+
       function resetIdleTime() { idleTime = 0; }
-      document.onmousemove = resetIdleTime;
-      document.onkeypress = resetIdleTime;
+
+      document.addEventListener("mousemove", resetIdleTime);
+      document.addEventListener("keypress", resetIdleTime);
+      document.addEventListener("mousedown", resetIdleTime);
+      document.addEventListener("scroll", resetIdleTime);
+      document.addEventListener("touchstart", resetIdleTime);
+      document.addEventListener("touchmove", resetIdleTime);
 
       setInterval(async () => {
           idleTime++;
-          if (idleTime > 5) {
-              alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ලොග් අවුට් විය.");
-              const docRef = doc(db, "allowed_users", userId);
-              await updateDoc(docRef, { is_logged_in: false });
+          if (idleTime >= 5) {
+              idleTime = 0;
+              alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ස්වයංක්‍රීයව ලොග් අවුට් විය.");
+              try {
+                  const docRef = doc(db, "allowed_users", userId);
+                  await updateDoc(docRef, { last_active: new Date("2000-01-01") });
+              } catch (e) { console.error(e); }
               localStorage.removeItem("iq_user_id");
               window.location.href = "proiqmind.html";
           }
       }, 60000);
 
-      window.addEventListener("beforeunload", async () => {
-          if(userId) {
+      window.addEventListener("beforeunload", () => {
+          if (userId) {
               const docRef = doc(db, "allowed_users", userId);
-              await updateDoc(docRef, { is_logged_in: false });
+              updateDoc(docRef, { last_active: new Date("2000-01-01") });
           }
       });
+      // ===== අවසානය =====
     </script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -135,8 +111,6 @@
             transition: 0.2s;
         }
         .back-btn:hover { color: #fff; background: rgba(255,255,255,0.13); }
-
-        /* ── HEADER ── */
         .header {
             background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
             border-radius: 24px;
@@ -178,8 +152,6 @@
             margin-top: 5px;
             font-weight: 600;
         }
-
-        /* ── MAIN TABS ── */
         .main-tabs {
             display: flex;
             width: 100%;
@@ -213,12 +185,8 @@
             color: rgba(255,255,255,0.75);
             background: rgba(255,255,255,0.07);
         }
-
-        /* ── TAB PANELS ── */
         .tab-panel { display: none; width: 100%; }
         .tab-panel.active { display: flex; flex-direction: column; gap: 14px; }
-
-        /* ── SUBJECT GRID (O/L & A/L) ── */
         .subject-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -251,11 +219,6 @@
             color: #fff;
             transform: translateY(-1px);
         }
-        .subject-btn.active {
-            box-shadow: 0 4px 18px rgba(255,65,108,0.28);
-        }
-
-        /* ── PAPERS VIEW (after subject selected) ── */
         .papers-view { display: none; flex-direction: column; gap: 14px; width: 100%; }
         .papers-view.active { display: flex; }
         .subject-header {
@@ -291,8 +254,6 @@
             font-weight: 700;
             text-align: center;
         }
-
-        /* ── PAPER CARDS ── */
         .papers-list {
             display: flex;
             flex-direction: column;
@@ -393,7 +354,6 @@
             box-shadow: 0 4px 14px rgba(247,183,51,0.35);
         }
         .btn-marking:hover { box-shadow: 0 6px 22px rgba(247,183,51,0.52); transform: scale(1.03); }
-
         .footer-note {
             color: rgba(255,255,255,0.28);
             font-size: 11px;
@@ -423,7 +383,7 @@
 
 <div class="container">
 
-    <a href="#" class="back-btn" onclick="window.history.back(); return false;">
+    <a href="propage.html" class="back-btn">
         <i class="fas fa-arrow-left"></i> ආපසු යන්න
     </a>
 
@@ -433,138 +393,92 @@
         <div class="brand-sub">ශිෂ්‍යත්ව · සා.පෙළ · උ.පෙළ · පසුගිය ප්‍රශ්න පත්‍ර PDF</div>
     </div>
 
-    <!-- ══ MAIN TABS ══ -->
     <div class="main-tabs">
-        <button class="main-tab-btn active" onclick="switchMainTab('scholarship')">🎓 ශිෂ්‍යත්ව<br>විභාගය</button>
-        <button class="main-tab-btn" onclick="switchMainTab('ol')">📘 සාමාන්‍ය<br>පෙළ</button>
-        <button class="main-tab-btn" onclick="switchMainTab('al')">📗 උසස්<br>පෙළ</button>
+        <button class="main-tab-btn active" onclick="switchMainTab('scholarship', this)">🎓 ශිෂ්‍යත්ව<br>විභාගය</button>
+        <button class="main-tab-btn" onclick="switchMainTab('ol', this)">📘 සාමාන්‍ය<br>පෙළ</button>
+        <button class="main-tab-btn" onclick="switchMainTab('al', this)">📗 උසස්<br>පෙළ</button>
     </div>
 
-    <!-- ══════════════════════════════════════
-         TAB 1 · SCHOLARSHIP
-    ══════════════════════════════════════ -->
+    <!-- TAB 1 · SCHOLARSHIP -->
     <div class="tab-panel active" id="tab-scholarship">
         <div class="section-label">papers</div>
         <div class="papers-list" id="scholarship-papers"></div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         TAB 2 · O/L
-    ══════════════════════════════════════ -->
+    <!-- TAB 2 · O/L -->
     <div class="tab-panel" id="tab-ol">
-        <!-- Subject grid -->
         <div id="ol-subject-view">
             <div class="section-label" style="margin-bottom:0">විෂය තෝරන්න</div>
             <div class="subject-grid" style="margin-top:14px">
-                <button class="subject-btn" onclick="openSubject('ol','Sinhala','මව්බස (සිංහල)','📖')">
-                    <span class="subj-icon">📖</span>මව්බස (සිංහල)
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Tamil','මව්බස (දෙමළ)','📝')">
-                    <span class="subj-icon">📝</span>මව්බස (දෙමළ)
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Maths','ගණිතය','🔢')">
-                    <span class="subj-icon">🔢</span>ගණිතය
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Science','විද්‍යාව','🔬')">
-                    <span class="subj-icon">🔬</span>විද්‍යාව
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','English','ඉංග්‍රීසි','🌐')">
-                    <span class="subj-icon">🌐</span>ඉංග්‍රීසි
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Religion','ආගම','🙏')">
-                    <span class="subj-icon">🙏</span>ආගම
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Art','චිත්‍ර කලාව','🎨')">
-                    <span class="subj-icon">🎨</span>චිත්‍ර කලාව
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Drama','නාට්‍ය හා රංග කලාව','🎭')">
-                    <span class="subj-icon">🎭</span>නාට්‍ය හා රංග කලාව
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Music','සංගීතය','🎵')">
-                    <span class="subj-icon">🎵</span>සංගීතය
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Dance','නැටුම්','💃')">
-                    <span class="subj-icon">💃</span>නැටුම්
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','ICT','ICT','💻')">
-                    <span class="subj-icon">💻</span>ICT
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Agriculture','කෘෂිකර්මය','🌾')">
-                    <span class="subj-icon">🌾</span>කෘෂිකර්මය
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','HomeEcon','ගෘහ ආර්ථික විද්‍යාව','🏠')">
-                    <span class="subj-icon">🏠</span>ගෘහ ආර්ථික විද්‍යාව
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','AppArt','ව්‍යවහාරික චිත්‍ර','🖌️')">
-                    <span class="subj-icon">🖌️</span>ව්‍යවහාරික චිත්‍ර
-                </button>
-                <button class="subject-btn" onclick="openSubject('ol','Electronics','ඉලෙක්ට්‍රොනික තාක්ෂණය','⚡')">
-                    <span class="subj-icon">⚡</span>ඉලෙක්ට්‍රොනික තාක්ෂණය
-                </button>
+                <button class="subject-btn" onclick="openSubject('ol','Sinhala','මව්බස (සිංහල)','📖')"><span class="subj-icon">📖</span>මව්බස (සිංහල)</button>
+                <button class="subject-btn" onclick="openSubject('ol','Tamil','මව්බස (දෙමළ)','📝')"><span class="subj-icon">📝</span>මව්බස (දෙමළ)</button>
+                <button class="subject-btn" onclick="openSubject('ol','Maths','ගණිතය','🔢')"><span class="subj-icon">🔢</span>ගණිතය</button>
+                <button class="subject-btn" onclick="openSubject('ol','Science','විද්‍යාව','🔬')"><span class="subj-icon">🔬</span>විද්‍යාව</button>
+                <button class="subject-btn" onclick="openSubject('ol','English','ඉංග්‍රීසි','🌐')"><span class="subj-icon">🌐</span>ඉංග්‍රීසි</button>
+                <button class="subject-btn" onclick="openSubject('ol','Religion','ආගම','🙏')"><span class="subj-icon">🙏</span>ආගම</button>
+                <button class="subject-btn" onclick="openSubject('ol','Art','චිත්‍ර කලාව','🎨')"><span class="subj-icon">🎨</span>චිත්‍ර කලාව</button>
+                <button class="subject-btn" onclick="openSubject('ol','Drama','නාට්‍ය හා රංග කලාව','🎭')"><span class="subj-icon">🎭</span>නාට්‍ය හා රංග කලාව</button>
+                <button class="subject-btn" onclick="openSubject('ol','Music','සංගීතය','🎵')"><span class="subj-icon">🎵</span>සංගීතය</button>
+                <button class="subject-btn" onclick="openSubject('ol','Dance','නැටුම්','💃')"><span class="subj-icon">💃</span>නැටුම්</button>
+                <button class="subject-btn" onclick="openSubject('ol','ICT','ICT','💻')"><span class="subj-icon">💻</span>ICT</button>
+                <button class="subject-btn" onclick="openSubject('ol','Agriculture','කෘෂිකර්මය','🌾')"><span class="subj-icon">🌾</span>කෘෂිකර්මය</button>
+                <button class="subject-btn" onclick="openSubject('ol','HomeEcon','ගෘහ ආර්ථික විද්‍යාව','🏠')"><span class="subj-icon">🏠</span>ගෘහ ආර්ථික විද්‍යාව</button>
+                <button class="subject-btn" onclick="openSubject('ol','AppArt','ව්‍යවහාරික චිත්‍ර','🖌️')"><span class="subj-icon">🖌️</span>ව්‍යවහාරික චිත්‍ර</button>
+                <button class="subject-btn" onclick="openSubject('ol','Electronics','ඉලෙක්ට්‍රොනික තාක්ෂණය','⚡')"><span class="subj-icon">⚡</span>ඉලෙක්ට්‍රොනික තාක්ෂණය</button>
             </div>
         </div>
-
-        <!-- Papers view (shown after subject click) -->
         <div class="papers-view" id="ol-papers-view">
             <div class="subject-header">
-                <button class="back-subject-btn" onclick="closeSubject('ol')">
-                    <i class="fas fa-arrow-left"></i> ආපසු
-                </button>
+                <button class="back-subject-btn" onclick="closeSubject('ol')"><i class="fas fa-arrow-left"></i> ආපසු</button>
                 <div class="subject-title-pill" id="ol-subject-title">—</div>
             </div>
             <div class="papers-list" id="ol-papers-list"></div>
         </div>
     </div>
 
-    <!-- ══════════════════════════════════════
-         TAB 3 · A/L
-    ══════════════════════════════════════ -->
+    <!-- TAB 3 · A/L -->
     <div class="tab-panel" id="tab-al">
-        <!-- Subject grid -->
         <div id="al-subject-view">
             <div class="section-label" style="margin-bottom:0">ධාරාව / විෂය තෝරන්න</div>
             <div class="subject-grid" style="margin-top:14px">
-                <button class="subject-btn" onclick="openSubject('al','Bio','ජීව විද්‍යාව (Bio)','🧬')">
-                    <span class="subj-icon">🧬</span>ජීව විද්‍යාව
-                </button>
-                <button class="subject-btn" onclick="openSubject('al','Maths','ගණිතය (Maths)','📐')">
-                    <span class="subj-icon">📐</span>ගණිතය
-                </button>
-                <button class="subject-btn" onclick="openSubject('al','Technology','තාක්ෂණය (Technology)','⚙️')">
-                    <span class="subj-icon">⚙️</span>තාක්ෂණය
-                </button>
-                <button class="subject-btn" onclick="openSubject('al','Arts','කලා (Arts)','🎭')">
-                    <span class="subj-icon">🎭</span>කලා
-                </button>
-                <button class="subject-btn" onclick="openSubject('al','Commerce','වාණිජ (Commerce)','📊')">
-                    <span class="subj-icon">📊</span>වාණිජ
-                </button>
+                <button class="subject-btn" onclick="openSubject('al','Bio','ජීව විද්‍යාව (Bio)','🧬')"><span class="subj-icon">🧬</span>ජීව විද්‍යාව</button>
+                <button class="subject-btn" onclick="openSubject('al','Maths','ගණිතය (Maths)','📐')"><span class="subj-icon">📐</span>ගණිතය</button>
+                <button class="subject-btn" onclick="openSubject('al','Technology','තාක්ෂණය (Technology)','⚙️')"><span class="subj-icon">⚙️</span>තාක්ෂණය</button>
+                <button class="subject-btn" onclick="openSubject('al','Arts','කලා (Arts)','🎭')"><span class="subj-icon">🎭</span>කලා</button>
+                <button class="subject-btn" onclick="openSubject('al','Commerce','වාණිජ (Commerce)','📊')"><span class="subj-icon">📊</span>වාණිජ</button>
             </div>
         </div>
-
-        <!-- Papers view -->
         <div class="papers-view" id="al-papers-view">
             <div class="subject-header">
-                <button class="back-subject-btn" onclick="closeSubject('al')">
-                    <i class="fas fa-arrow-left"></i> ආපසු
-                </button>
+                <button class="back-subject-btn" onclick="closeSubject('al')"><i class="fas fa-arrow-left"></i> ආපසු</button>
                 <div class="subject-title-pill" id="al-subject-title">—</div>
             </div>
             <div class="papers-list" id="al-papers-list"></div>
         </div>
     </div>
 
-    <div class="footer-note">© 2024 IQ MIND PRO · All Rights Reserved</div>
+    <div class="footer-note">© 2026 IQ MIND PRO · All Rights Reserved</div>
 
 </div>
 
 <script>
-    // ── Helpers ──────────────────────────────────────────────
-    const years = [2018,2019,2020,2021,2022,2023,2024,2025];
+    // ── GitHub Raw Base URL ──────────────────────────────────
+    // ඔබේ GitHub username සහ repo name මෙතන දාන්න
+    const GITHUB_BASE = "https://raw.githubusercontent.com/iqmind-lab/IQMINDLK01/main";
 
-    function buildPaperCards(listEl, prefix, examLabel) {
+    // ── Years ────────────────────────────────────────────────
+    const years = [2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
+
+    // ── Paper cards builder ──────────────────────────────────
+    // folderName  = GitHub folder නම  (e.g. "Grade5")
+    // filePrefix  = file නම prefix    (e.g. "2018paper" / "2018marking")
+    // examLabel   = card title        (e.g. "ශිෂ්‍යත්ව විභාගය")
+    function buildPaperCards(listEl, folderName, examLabel) {
         listEl.innerHTML = '';
         years.forEach(y => {
+            const paperURL   = `${GITHUB_BASE}/${folderName}/${y}paper.pdf`;
+            const markingURL = `${GITHUB_BASE}/${folderName}/${y}marking.pdf`;
+
             const card = document.createElement('div');
             card.className = 'paper-card';
             card.innerHTML = `
@@ -579,10 +493,10 @@
                     </div>
                 </div>
                 <div class="card-btns">
-                    <a href="papers/${prefix}-${y}-paper.pdf" class="download-btn btn-paper" target="_blank">
+                    <a href="${paperURL}" download="${y}paper.pdf" class="download-btn btn-paper" target="_blank">
                         <i class="fas fa-download"></i> Paper Download
                     </a>
-                    <a href="marking/${prefix}-${y}-marking.pdf" class="download-btn btn-marking" target="_blank">
+                    <a href="${markingURL}" download="${y}marking.pdf" class="download-btn btn-marking" target="_blank">
                         <i class="fas fa-check-circle"></i> Marking Scheme
                     </a>
                 </div>`;
@@ -590,33 +504,63 @@
         });
     }
 
-    // ── Scholarship tab init ──────────────────────────────────
+    // ── GitHub folder mapping ────────────────────────────────
+    // tab + subject key → GitHub folder name
+    const FOLDER_MAP = {
+        // Scholarship
+        "scholarship": "Grade5",
+
+        // O/L
+        "ol-Sinhala":     "OL/Sinhala",
+        "ol-Tamil":       "OL/Tamil",
+        "ol-Maths":       "OL/Maths",
+        "ol-Science":     "OL/Science",
+        "ol-English":     "OL/English",
+        "ol-Religion":    "OL/Religion",
+        "ol-Art":         "OL/Art",
+        "ol-Drama":       "OL/Drama",
+        "ol-Music":       "OL/Music",
+        "ol-Dance":       "OL/Dance",
+        "ol-ICT":         "OL/ICT",
+        "ol-Agriculture": "OL/Agriculture",
+        "ol-HomeEcon":    "OL/HomeEcon",
+        "ol-AppArt":      "OL/AppArt",
+        "ol-Electronics": "OL/Electronics",
+
+        // A/L
+        "al-Bio":        "AL/Bio",
+        "al-Maths":      "AL/Maths",
+        "al-Technology": "AL/Technology",
+        "al-Arts":       "AL/Arts",
+        "al-Commerce":   "AL/Commerce",
+    };
+
+    // ── Scholarship init ─────────────────────────────────────
     buildPaperCards(
         document.getElementById('scholarship-papers'),
-        'scholarship',
+        FOLDER_MAP["scholarship"],
         'ශිෂ්‍යත්ව විභාගය'
     );
 
     // ── Main tab switching ────────────────────────────────────
-    function switchMainTab(name) {
+    function switchMainTab(name, btn) {
         document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.main-tab-btn').forEach(b => b.classList.remove('active'));
         document.getElementById('tab-' + name).classList.add('active');
-        event.currentTarget.classList.add('active');
-        // reset subject views when switching tabs
+        btn.classList.add('active');
         closeSubject('ol');
         closeSubject('al');
     }
 
     // ── Subject open / close ──────────────────────────────────
     function openSubject(level, key, label, icon) {
-        const listEl = document.getElementById(level + '-papers-list');
+        const listEl   = document.getElementById(level + '-papers-list');
+        const mapKey   = level + '-' + key;
+        const folder   = FOLDER_MAP[mapKey] || (level.toUpperCase() + '/' + key);
         document.getElementById(level + '-subject-title').textContent = icon + ' ' + label;
-        const prefix = level + '-' + key.toLowerCase();
-        buildPaperCards(listEl, prefix, label);
+        buildPaperCards(listEl, folder, label);
         document.getElementById(level + '-subject-view').style.display = 'none';
-        const pv = document.getElementById(level + '-papers-view');
-        pv.classList.add('active');
+        document.getElementById(level + '-papers-view').classList.add('active');
     }
 
     function closeSubject(level) {
