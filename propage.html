@@ -25,7 +25,6 @@
 
       if (!userId) { window.location.href = "proiqmind.html"; }
 
-      // --- සබ්ස්ක්රිප්ෂන් කාලය පෙන්වීමේ කොටස ---
       async function checkSubscription() {
           try {
               const docRef = doc(db, "allowed_users", userId);
@@ -57,8 +56,6 @@
       }
       checkSubscription();
 
-      // --- Firebase එකට Heartbeat (පණිවුඩයක්) යැවීම ---
-      // මේ මගින් පරිශීලකයා පිටුවේ සිටින තාක් සෑම විනාඩියකම "මම ඉන්නවා" කියා වේලාව සටහන් කරයි.
       async function updateHeartbeat() {
           if (userId) {
               try {
@@ -67,15 +64,12 @@
               } catch (e) { console.error("Heartbeat Error:", e); }
           }
       }
-      updateHeartbeat(); // පිටුවට ආපු ගමන් මුලින්ම update කරයි.
+      updateHeartbeat();
 
-      // --- මැනුවල් ලොග් අවුට් වීමේ ක්රියාවලිය ---
       async function manualLogout() {
           if (confirm("ඔබට මෙම ගිණුමෙන් ඉවත් වීමට අවශ්යද?")) {
               try {
                   const docRef = doc(db, "allowed_users", userId);
-                  // ලොග් අවුට් වෙනකොට last_active එක බොහෝ පැරණි දිනයකට දමයි (උදා: වසර 2000 ට).
-                  // එවිට වෙනත් උපාංගයකට ක්ෂණිකව ලොග් විය හැක.
                   await updateDoc(docRef, { last_active: new Date("2000-01-01") });
                   localStorage.removeItem("iq_user_id");
                   window.location.href = "proiqmind.html";
@@ -87,24 +81,41 @@
       }
       window.manualLogout = manualLogout;
 
-      // විනාඩි 5ක අක්රියතා ටයිමරය (User එක තැනක හිටියොත්)
+      // ===== නිවැරදි කළ Idle Timer (විනාඩි 5) =====
       let idleTime = 0;
-      function resetIdleTime() { idleTime = 0; }
-      document.onmousemove = resetIdleTime;
-      document.onkeypress = resetIdleTime;
+
+      function resetIdleTime() {
+          idleTime = 0;
+      }
+
+      // Desktop සඳහා
+      document.addEventListener("mousemove", resetIdleTime);
+      document.addEventListener("keypress", resetIdleTime);
+      document.addEventListener("mousedown", resetIdleTime);
+      document.addEventListener("scroll", resetIdleTime);
+
+      // Mobile සඳහා (touch events)
+      document.addEventListener("touchstart", resetIdleTime);
+      document.addEventListener("touchmove", resetIdleTime);
 
       setInterval(async () => {
           idleTime++;
-          if (idleTime > 1) {
-              alert("ඔබ විනාඩි 1ක් අක්රියව සිටි නිසා ලොග් අවුට් විය.");
-              manualLogout(); // කලින් ලියපු ලොග් අවුට් ශ්‍රිතයම ක්‍රියාත්මක කරයි.
+          if (idleTime >= 5) {
+              // Timer reset කරයි - confirm box නිසා double logout වීම වළකයි
+              idleTime = 0;
+              alert("ඔබ විනාඩි 5ක් අක්‍රියව සිටි නිසා ස්වයංක්‍රීයව ලොග් අවුට් විය.");
+              try {
+                  const docRef = doc(db, "allowed_users", userId);
+                  await updateDoc(docRef, { last_active: new Date("2000-01-01") });
+              } catch (e) { console.error("Auto logout error:", e); }
+              localStorage.removeItem("iq_user_id");
+              window.location.href = "proiqmind.html";
           } else {
-              // පරිශීලකයා ක්‍රියාකාරීව සිටී නම් සෑම විනාඩියකටම Firebase එකේ වේලාව අලුත් කරයි.
               updateHeartbeat();
           }
-      }, 60000);
+      }, 60000); // සෑම 60 seconds කට වරක්
+      // ===== අවසානය =====
 
-      // බ්‍රවුසර් ටැබ් එක වහනකොට උපරිම උත්සාහයක් ගන්නවා වේලාව පරණ කරන්න
       window.addEventListener("beforeunload", () => {
           if(userId) {
               const docRef = doc(db, "allowed_users", userId);
